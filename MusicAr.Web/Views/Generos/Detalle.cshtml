@@ -1,0 +1,19 @@
+@model GeneroDetalleViewModel
+@{
+    ViewData["Title"] = Model.Nombre;
+}
+
+<section class="d-flex align-items-center gap-3">
+    <button type="button" class="btn btn-accent btn-play btn-play-lg" aria-label="Reproducir todo">@await Html.PartialAsync("_Icono", "play")</button>
+    <div>
+        <div class="etiqueta">GÉNERO</div>
+        <h1 class="display-5 fw-bold mb-0">@Model.Nombre</h1>
+    </div>
+</section>
+
+<section class="d-flex flex-column gap-1">
+    @foreach (var cancion in Model.Canciones)
+    {
+        <partial name="_CancionFila" model="cancion" />
+    }
+</section>

@@ -8,7 +8,8 @@ namespace MusicAr.Web.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            // TODO: pedir los géneros al CatalogService
+            return View(DatosDemo.Generos);
         }
 
         public IActionResult Privacy()

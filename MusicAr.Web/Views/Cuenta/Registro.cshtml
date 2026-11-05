@@ -1,0 +1,40 @@
+@model RegistroViewModel
+@{
+    Layout = "_LayoutAuth";
+    ViewData["Title"] = "Crear cuenta";
+}
+
+<h1 class="h3 fw-bold mb-4">Crear cuenta</h1>
+
+<form asp-action="Registro" method="post" class="d-flex flex-column gap-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger-emphasis"></div>
+    <div>
+        <label asp-for="Nombre" class="form-label fw-semibold"></label>
+        <input asp-for="Nombre" class="form-control form-control-lg" autocomplete="username" />
+        <span asp-validation-for="Nombre" class="text-danger-emphasis small"></span>
+    </div>
+    <div>
+        <label asp-for="Email" class="form-label fw-semibold"></label>
+        <input asp-for="Email" class="form-control form-control-lg" autocomplete="email" />
+        <span asp-validation-for="Email" class="text-danger-emphasis small"></span>
+    </div>
+    <div>
+        <label asp-for="Pass" class="form-label fw-semibold"></label>
+        <input asp-for="Pass" class="form-control form-control-lg" autocomplete="new-password" />
+        <span asp-validation-for="Pass" class="text-danger-emphasis small"></span>
+    </div>
+    <div>
+        <label asp-for="ConfirmarPass" class="form-label fw-semibold"></label>
+        <input asp-for="ConfirmarPass" class="form-control form-control-lg" autocomplete="new-password" />
+        <span asp-validation-for="ConfirmarPass" class="text-danger-emphasis small"></span>
+    </div>
+    <button type="submit" class="btn btn-accent btn-lg rounded-pill mt-2">Crear cuenta</button>
+</form>
+
+<p class="text-center text-body-secondary mt-4 mb-0">
+    ¿Ya tenés cuenta? <a asp-action="Login">Iniciá sesión</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

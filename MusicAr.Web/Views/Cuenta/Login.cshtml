@@ -1,0 +1,30 @@
+@model LoginViewModel
+@{
+    Layout = "_LayoutAuth";
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<h1 class="h3 fw-bold mb-4">Iniciar sesión</h1>
+
+<form asp-action="Login" method="post" class="d-flex flex-column gap-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger-emphasis"></div>
+    <div>
+        <label asp-for="Identificador" class="form-label fw-semibold"></label>
+        <input asp-for="Identificador" class="form-control form-control-lg" autocomplete="username" />
+        <span asp-validation-for="Identificador" class="text-danger-emphasis small"></span>
+    </div>
+    <div>
+        <label asp-for="Pass" class="form-label fw-semibold"></label>
+        <input asp-for="Pass" class="form-control form-control-lg" autocomplete="current-password" />
+        <span asp-validation-for="Pass" class="text-danger-emphasis small"></span>
+    </div>
+    <button type="submit" class="btn btn-accent btn-lg rounded-pill mt-2">Iniciar sesión</button>
+</form>
+
+<p class="text-center text-body-secondary mt-4 mb-0">
+    ¿No tenés cuenta? <a asp-action="Registro">Registrate</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
