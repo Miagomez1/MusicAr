@@ -1,6 +1,12 @@
 <Solution>
+  <Folder Name="/Services/" />
+  <Folder Name="/Services/Catalog/">
+    <Project Path="MusicAr.CatalogService/MusicAr.ApiCatalog.csproj" />
+    <Project Path="MusicAr.Entidades/MusicAr.Entidades.csproj" Id="163df3ee-16a6-45d2-b4ab-c53fc7e1a30e" />
+    <Project Path="MusicAr.Infraestructura/MusicAr.Infraestructura.csproj" Id="f7a8dc73-1bc1-43d1-9d8d-d036d4a2e039" />
+    <Project Path="MusicAr.Logica/MusicAr.Logica.csproj" Id="249a60c0-e52c-46ef-91f4-0c3d99ddd249" />
+  </Folder>
   <Project Path="MusicAr.ApiGateway/MusicAr.ApiGateway.csproj" />
   <Project Path="MusicAr.AuthService/MusicAr.AuthService.csproj" />
-  <Project Path="MusicAr.CatalogService/MusicAr.CatalogService.csproj" />
   <Project Path="MusicAr.Web/MusicAr.Web.csproj" />
 </Solution>
