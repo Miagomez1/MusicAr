@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MusicAr.ApiGateway/MusicAr.ApiGateway.csproj" />
+  <Project Path="MusicAr.AuthService/MusicAr.AuthService.csproj" />
+  <Project Path="MusicAr.CatalogService/MusicAr.CatalogService.csproj" />
+  <Project Path="MusicAr.Web/MusicAr.Web.csproj" />
+</Solution>
