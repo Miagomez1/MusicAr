@@ -1,0 +1,41 @@
+@{
+    var ctrl = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<aside class="sidebar panel p-3 d-none d-md-flex flex-column gap-2" aria-label="Navegación principal">
+    <a class="brand px-2 pb-2" asp-controller="Home" asp-action="Index">MusicAr</a>
+
+    <ul class="nav nav-pills flex-column gap-1">
+        <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 @(ctrl == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">
+                @await Html.PartialAsync("_Icono", "home") Inicio
+            </a>
+        </li>
+        <li class="nav-item">
+            @* TODO: enlazar a Favoritos cuando exista esa vista *@
+            <a class="nav-link d-flex align-items-center gap-2" href="#">@await Html.PartialAsync("_Icono", "heart") Favoritos</a>
+        </li>
+    </ul>
+
+    <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-2 text-body-secondary small fw-semibold">
+        Tus playlists
+        <a class="btn-icono borde" asp-controller="Playlists" asp-action="Nueva" aria-label="Crear playlist">@await Html.PartialAsync("_Icono", "plus")</a>
+    </div>
+
+    @* TODO: reemplazar por las playlists reales del usuario (servicio de Playlists) *@
+    <ul class="nav nav-pills flex-column gap-1">
+        @if (ctrl == "Playlists")
+        {
+            <li class="nav-item">
+                <a class="nav-link active d-flex align-items-center gap-3" asp-controller="Playlists" asp-action="Nueva">
+                    <span class="cover cover-sm"></span> Nueva playlist
+                </a>
+            </li>
+        }
+        @foreach (var nombre in new[] { "Mi playlist 1", "Mi playlist 2", "Mi playlist 3" })
+        {
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center gap-3" href="#"><span class="cover cover-sm"></span> @nombre</a>
+            </li>
+        }
+    </ul>
+</aside>

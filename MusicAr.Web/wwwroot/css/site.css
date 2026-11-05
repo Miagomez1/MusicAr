@@ -1,31 +1,137 @@
-html {
-  font-size: 14px;
+/* ===== Paleta de MusicAr (si cambia, se cambia solo acá) ===== */
+:root {
+  --ma-white: #FFFFFF;
+  --ma-dark: #1F1F1F;
+  --ma-gray: #636363;
+  --ma-plum: #751952;
+  --ma-lime: #E8FFC0;
+  /* Derivados: fondo de paneles y gris claro para texto (el #636363 no tiene contraste suficiente como texto) */
+  --ma-panel: #2B2B2B;
+  --ma-muted: #BDBDBD;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* ===== Bootstrap en modo oscuro, apuntando a la paleta ===== */
+[data-bs-theme="dark"] {
+  --bs-body-bg: var(--ma-dark);
+  --bs-body-color: var(--ma-white);
+  --bs-secondary-color: var(--ma-muted);
+  --bs-border-color: var(--ma-gray);
+  --bs-link-color-rgb: 232, 255, 192;
+  --bs-link-hover-color-rgb: 255, 255, 255;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+html { font-size: 14px; }
+@media (min-width: 768px) { html { font-size: 16px; } }
+
+.btn:focus, .btn:active:focus, .form-control:focus, .nav-link:focus-visible {
+  box-shadow: 0 0 0 0.1rem var(--ma-dark), 0 0 0 0.25rem var(--ma-lime);
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* ===== Estructura general ===== */
+.panel { background: var(--ma-panel); border-radius: .75rem; }
+.contenido > * { flex-shrink: 0; }
+.sidebar { width: 260px; flex: none; }
+.brand { color: var(--ma-lime); font-weight: 700; font-size: 1.4rem; text-decoration: none; }
+.etiqueta { color: var(--ma-muted); font-size: .8rem; font-weight: 600; letter-spacing: .08em; }
+.centrado { display: grid; place-items: center; }
+
+/* Navegación lateral (nav-pills de Bootstrap con la paleta) */
+.nav-pills {
+  --bs-nav-link-color: var(--ma-white);
+  --bs-nav-link-hover-color: var(--ma-white);
+  --bs-nav-pills-link-active-bg: var(--ma-plum);
+  --bs-nav-pills-link-active-color: var(--ma-white);
 }
 
-body {
-  margin-bottom: 60px;
+/* ===== Botones ===== */
+.btn-accent {
+  --bs-btn-color: var(--ma-dark);
+  --bs-btn-bg: var(--ma-lime);
+  --bs-btn-border-color: var(--ma-lime);
+  --bs-btn-hover-color: var(--ma-dark);
+  --bs-btn-hover-bg: #F3FFDF;
+  --bs-btn-hover-border-color: #F3FFDF;
+  --bs-btn-active-color: var(--ma-dark);
+  --bs-btn-active-bg: #F3FFDF;
+  --bs-btn-active-border-color: #F3FFDF;
+  font-weight: 600;
 }
+.btn-neutral {
+  --bs-btn-color: var(--ma-muted);
+  --bs-btn-bg: var(--ma-gray);
+  --bs-btn-border-color: var(--ma-gray);
+  --bs-btn-disabled-color: var(--ma-muted);
+  --bs-btn-disabled-bg: var(--ma-gray);
+  --bs-btn-disabled-border-color: var(--ma-gray);
+}
+.btn-play { width: 44px; height: 44px; padding: 0; border-radius: 50%; display: inline-grid; place-items: center; }
+.btn-play-lg { width: 56px; height: 56px; }
+.btn-play-xl { width: 64px; height: 64px; }
+.btn-icono {
+  width: 44px; height: 44px; display: inline-grid; place-items: center;
+  border: 0; border-radius: 50%; background: none; color: var(--ma-white);
+}
+.btn-icono:hover { background: rgba(255, 255, 255, .08); color: var(--ma-white); }
+.btn-icono.borde { border: 1px solid var(--ma-gray); }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
+/* ===== Iconos y portadas ===== */
+.icono { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.btn-play .icono { width: 1.5rem; height: 1.5rem; }
+.cover { background: var(--ma-gray); border-radius: .4rem; flex: none; }
+.cover-plum { background: var(--ma-plum); }
+.cover-oscuro { background: var(--ma-dark); color: var(--ma-muted); }
+.cover-sm { width: 40px; height: 40px; }
+.cover-md { width: 48px; height: 48px; }
+.cover-lg { width: 56px; height: 56px; }
+.cover-xl { width: 232px; height: 232px; border-radius: .5rem; box-shadow: 0 4px 40px rgba(0, 0, 0, .4); }
+.cover-xxl { width: 320px; height: 320px; border-radius: .75rem; display: grid; place-items: center; color: var(--ma-lime); }
+.cover-xl .icono, .cover-xxl .icono { width: 5.5rem; height: 5.5rem; }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* ===== Buscador ===== */
+.buscador { height: 48px; background: var(--ma-dark); border: 1px solid var(--ma-gray); border-radius: 999px; color: var(--ma-muted); }
+.buscador:focus-within { outline: 2px solid var(--ma-lime); }
+
+/* ===== Tarjetas de género (línea de color inferior) ===== */
+.genero-card {
+  display: flex; align-items: flex-end; height: 150px; padding: 1.1rem;
+  background: var(--ma-dark); border-bottom: 8px solid var(--acento, var(--ma-gray));
+  border-radius: .75rem; color: var(--ma-white); font-size: 1.4rem; font-weight: 700; text-decoration: none;
 }
+.genero-card:hover { color: var(--ma-white); filter: brightness(1.25); }
+.acento-plum { --acento: var(--ma-plum); }
+.acento-lime { --acento: var(--ma-lime); }
+.acento-gray { --acento: var(--ma-gray); }
+
+/* ===== Filas de canciones ===== */
+.fila { display: grid; grid-template-columns: 2rem 3rem 1fr auto; gap: .75rem; align-items: center; padding: .4rem .75rem; border-radius: .5rem; }
+.fila.sonando { background: var(--ma-plum); }
+.fila .num { text-align: center; color: var(--ma-muted); }
+.fila-simple { display: grid; grid-template-columns: 3rem 1fr auto; gap: .75rem; align-items: center; padding: .4rem .5rem; border-radius: .5rem; }
+
+/* ===== Reproductor mini ===== */
+.player { height: 88px; display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; padding: 0 1.25rem; }
+.player .progress, .col-reproductor .progress {
+  --bs-progress-height: 4px;
+  --bs-progress-bg: var(--ma-gray);
+  --bs-progress-bar-bg: var(--ma-lime);
+}
+.player .progress { width: 100%; max-width: 480px; }
+.col-reproductor { width: 100%; max-width: 480px; }
+
+/* ===== Reproductor expandido y cola ===== */
+.cola { width: 340px; flex: none; }
+.cola-item { display: flex; align-items: center; gap: .75rem; padding: .5rem; border-radius: .5rem; font-size: .9rem; }
+.cola-item.sonando { background: var(--ma-plum); }
+
+/* ===== Nueva playlist ===== */
+.playlist-header { background: var(--ma-plum); border-radius: .75rem; }
+.playlist-nombre {
+  width: 100%; background: none; border: 0; border-bottom: 2px solid var(--ma-lime);
+  color: var(--ma-white); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; outline: 0;
+}
+.playlist-nombre:focus { background: rgba(31, 31, 31, .25); }
+
+/* ===== Login y registro ===== */
+.auth-wrap { min-height: 100vh; display: grid; place-items: center; padding: 1rem; }
+.auth-card { max-width: 420px; }
+.enlace-volver { font-size: .9rem; display: inline-block; padding: .4rem 0; }

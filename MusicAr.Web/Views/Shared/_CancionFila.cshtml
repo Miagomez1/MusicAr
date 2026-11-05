@@ -1,0 +1,14 @@
+@model CancionViewModel
+<div class="fila @(Model.Sonando ? "sonando" : "")">
+    <span class="num">@Model.Numero</span>
+    <span class="cover cover-md"></span>
+    <div>
+        <div>@Model.Titulo</div>
+        <small class="text-body-secondary">@Model.Artista</small>
+    </div>
+    <div class="d-flex align-items-center gap-1">
+        <button type="button" class="btn-icono" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
+        <button type="button" class="btn-icono" aria-label="Agregar a una playlist">@await Html.PartialAsync("_Icono", "plus")</button>
+        <button type="button" class="btn btn-accent btn-play" aria-label="Reproducir">@await Html.PartialAsync("_Icono", "play")</button>
+    </div>
+</div>
