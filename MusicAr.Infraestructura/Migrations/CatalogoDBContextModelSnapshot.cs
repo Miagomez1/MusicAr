@@ -35,7 +35,7 @@ namespace MusicAr.Infraestructura.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Artista");
+                    b.ToTable("Artistas");
                 });
 
             modelBuilder.Entity("MusicAr.Entidades.Cancion", b =>
@@ -89,7 +89,7 @@ namespace MusicAr.Infraestructura.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genero");
+                    b.ToTable("Generos");
                 });
 
             modelBuilder.Entity("MusicAr.Entidades.Cancion", b =>
