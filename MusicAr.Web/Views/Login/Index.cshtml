@@ -1,0 +1,25 @@
+﻿@model MusicAr.Web.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<h2>Iniciar sesión</h2>
+
+<form asp-controller="Login" asp-action="Index" method="post">
+
+    <div>
+        <label asp-for="Identificador"></label>
+        <input asp-for="Identificador" />
+        <span asp-validation-for="Identificador"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <button type="submit">Ingresar</button>
+    
+</form>
