@@ -36,7 +36,28 @@ namespace MusicAr.Web.Controllers
                 return View(Enumerable.Empty<GeneroViewModel>());
             }
         }
+       /* [HttpGet]
+        public async Task<IActionResult> Buscar(BuscadorViewModel model)
+        { 
+            if (!ModelState.IsValid || string.IsNullOrWhiteSpace(model?.Q))
+            {
+                return View(new List<CancionDto>()); 
+            }
 
+            var client = _httpClientFactory.CreateClient("ApiGatewayClient");
+
+            var response = await client.GetAsync($"api/catalogo/canciones/buscar?q={Uri.EscapeDataString(model.Q)}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return View(new List<CancionDto>());
+            }
+
+            var canciones = await response.ContentReadFromJsonAsync<List<CancionDto>>();
+
+            return View(canciones);
+        }
+        */
         public IActionResult Privacy()
         {
             return View();
