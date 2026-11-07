@@ -7,14 +7,28 @@
      data-cover="@Model.CoverImageUrl">
 
     <span class="num">@Model.Numero</span>
-    <span class="cover cover-md" style="@(!string.IsNullOrEmpty(Model.CoverImageUrl) ? $"background-image: url('{Model.CoverImageUrl}'); background-size: cover; background-position: center;" : "")"></span>
-    <div>
+    @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+    {
+        <img src="@Model.CoverImageUrl" alt="@Model.Titulo" class="cover cover-md rounded" style="object-fit: cover;" />
+    }
+    else
+    {
+        <span class="cover cover-md"></span>
+    }
+    <div class="flex-grow-1">
         <div>@Model.Titulo</div>
         <small class="text-body-secondary">@Model.Artista</small>
     </div>
     <div class="d-flex align-items-center gap-1">
         <button type="button" class="btn-icono" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
         <button type="button" class="btn-icono" aria-label="Agregar a una playlist">@await Html.PartialAsync("_Icono", "plus")</button>
-        <button type="button" class="btn btn-accent btn-play" aria-label="Reproducir">@await Html.PartialAsync("_Icono", "play")</button>
+        <button type="button" class="btn btn-accent btn-play"
+                aria-label="Reproducir"
+                data-audio="@Model.AudioUrl"
+                data-titulo="@Model.Titulo"
+                data-artista="@Model.Artista"
+                data-cover="@Model.CoverImageUrl">
+            @await Html.PartialAsync("_Icono", "play")
+        </button>
     </div>
 </div>

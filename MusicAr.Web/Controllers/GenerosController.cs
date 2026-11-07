@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MusicAr.DTO;
 using MusicAr.Web.Models;
 
 namespace MusicAr.Web.Controllers
@@ -19,20 +20,36 @@ namespace MusicAr.Web.Controllers
 
             try
             {
-                // Hacemos la petición al API Gateway para obtener el detalle del género y sus canciones
-                var vm = await client.GetFromJsonAsync<GeneroDetalleViewModel>($"api/canciones/generos/{id}/canciones");
+                var generos = await client.GetFromJsonAsync<List<GeneroDto>>("api/canciones/generos");
+                var generoActual = generos?.FirstOrDefault(g => g.Id == id);
 
-                if (vm is null || string.IsNullOrEmpty(vm.Nombre))
+                var cancionesDto = await client.GetFromJsonAsync<List<CancionDto>>($"api/canciones/genero/{id}");
+
+                int index = 1;
+                var cancionesViewModel = (cancionesDto ?? new List<CancionDto>()).Select(c => new CancionViewModel(
+                    Numero: index++,
+                    Titulo: c.Titulo,
+                    Artista: c.Artista,
+                    AudioUrl: c.AudioUrl,
+                    CoverImageUrl: c.CoverImageUrl,
+                    DurationInSeconds: c.DurationInSeconds
+                )).ToList();
+
+                var vm = new GeneroDetalleViewModel
                 {
-                    return NotFound();
-                }
+                    Nombre = generoActual?.Nombre ?? "Género",
+                    Canciones = cancionesViewModel
+                };
 
                 return View(vm);
             }
-            catch (HttpRequestException)
+            catch (Exception)
             {
-                // Si ocurre un error de red o el microservicio no responde
-                return NotFound();
+                return View(new GeneroDetalleViewModel
+                {
+                    Nombre = "Género",
+                    Canciones = new List<CancionViewModel>()
+                });
             }
         }
     }

@@ -1,8 +1,8 @@
-﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicAr.Logica;
 using MusicAr.Infraestructura;
+using MusicAr.Infraestructura.DTOs;
 
 namespace MusicAr.ApiCatalog.Controllers
 {
@@ -18,7 +18,6 @@ namespace MusicAr.ApiCatalog.Controllers
             _context = context;
             _catalogoService = catalogoService;
         }
-
 
         [HttpGet("generos")] 
         public async Task<IActionResult> Generos()
@@ -52,7 +51,6 @@ namespace MusicAr.ApiCatalog.Controllers
         [HttpGet("generos/{id}/canciones")]
         public async Task<IActionResult> ObtenerDetalleGenero(int id)
         {
-            // 1. Obtenemos el género para saber su nombre (usando tu servicio existente)
             var generos = await _catalogoService.ObtenerGenerosAsync();
             var genero = generos.FirstOrDefault(g => g.Id == id);
 
@@ -61,7 +59,6 @@ namespace MusicAr.ApiCatalog.Controllers
                 return NotFound();
             }
 
-            // 2. Buscamos las canciones que pertenecen a ese género
             var canciones = await _context.Canciones
                 .AsNoTracking()
                 .Where(c => c.GeneroId == id)
@@ -70,14 +67,13 @@ namespace MusicAr.ApiCatalog.Controllers
                     c.Id,
                     c.Titulo,
                     c.DurationInSeconds,
-                    c.AudioUrl,
+                    AudioUrl = $"http://localhost:5086/api/canciones/{c.Id}/audio",
                     c.CoverImageUrl,
                     Genero = genero.Nombre,
                     Artista = c.Artista != null ? c.Artista.Name : "Desconocido"
                 })
                 .ToListAsync();
 
-            // 3. Empaquetamos ambos datos para que coincidan con el GeneroDetalleViewModel de la Web
             var resultado = new
             {
                 Nombre = genero.Nombre,
@@ -85,6 +81,44 @@ namespace MusicAr.ApiCatalog.Controllers
             };
 
             return Ok(resultado);
+        }
+
+        [HttpGet("genero/{generoId:int}")]
+        public async Task<IActionResult> ObtenerPorGenero(int generoId)
+        {
+            var canciones = await _catalogoService.ObtenerCancionesPorGeneroAsync(generoId);
+            return Ok(canciones);
+        }
+
+        [HttpGet("{id:int}/audio")]
+        public async Task<IActionResult> ObtenerAudioCancion(int id, [FromServices] IHttpClientFactory httpClientFactory)
+        {
+            var cancion = await _context.Canciones
+                .AsNoTracking()
+                .Include(c => c.Artista)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (cancion == null) return NotFound();
+
+            try
+            {
+                var client = httpClientFactory.CreateClient();
+                var query = Uri.EscapeDataString($"{cancion.Artista?.Name} {cancion.Titulo}");
+                var url = $"https://api.deezer.com/search?q={query}";
+                var resp = await client.GetFromJsonAsync<DeezerTrackResponse>(url);
+                var preview = resp?.Data?.FirstOrDefault(d => !string.IsNullOrEmpty(d.Preview))?.Preview;
+
+                if (!string.IsNullOrEmpty(preview))
+                {
+                    return Redirect(preview);
+                }
+            }
+            catch
+            {
+                // Si Deezer falla, pasamos al fallback
+            }
+
+            return Redirect("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
         }
     }
 }

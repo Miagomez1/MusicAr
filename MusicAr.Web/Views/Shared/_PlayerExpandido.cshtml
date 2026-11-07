@@ -13,42 +13,38 @@
                         </div>
                         <div class="col-4 text-center">
                             <div class="etiqueta" id="playerExpandidoTitulo">REPRODUCIENDO DESDE</div>
-                            <div class="fw-semibold">MusicAr</div>
+                            <div class="fw-semibold" id="playerExpGenero">MusicAr</div>
                         </div>
                     </div>
 
                     <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center gap-4">
-                        <!-- Añadimos id="expanded-cover" -->
-                        <div id="expanded-cover" class="cover cover-plum cover-xxl" style="background-size: cover; background-position: center;">
-                            @await Html.PartialAsync("_Icono", "nota")
+                        <div id="expanded-cover" class="cover cover-plum cover-xxl overflow-hidden d-flex align-items-center justify-content-center" style="background-size: cover; background-position: center;">
+                            <img id="playerExpCover" src="" alt="Portada" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                            <span id="playerExpCoverPlaceholder">@await Html.PartialAsync("_Icono", "nota")</span>
                         </div>
 
                         <div class="col-reproductor d-flex flex-column gap-3">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
-                                    <!-- Añadimos id="expanded-title" -->
-                                    <div id="expanded-title" class="fs-4 fw-bold">Canción de ejemplo</div>
-                                    <!-- Añadimos id="expanded-artist" -->
-                                    <div id="expanded-artist" class="text-body-secondary">Artista</div>
+                                    <div id="expanded-title" class="fs-4 fw-bold">Sin reproducción</div>
+                                    <div id="expanded-artist" class="text-body-secondary">-</div>
                                 </div>
                                 <button type="button" class="btn-icono" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
                                 <button type="button" class="btn-icono" aria-label="Agregar a una playlist">@await Html.PartialAsync("_Icono", "plus")</button>
                             </div>
                             <div>
-                                <!-- Añadimos id="expanded-progress-container" y id="expanded-progress-bar" -->
                                 <div class="progress" role="progressbar" aria-label="Progreso de la canción" id="expanded-progress-container" style="cursor: pointer; height: 6px;">
                                     <div id="expanded-progress-bar" class="progress-bar" style="width: 0%"></div>
                                 </div>
                                 <div class="d-flex justify-content-between small text-body-secondary mt-2">
                                     <span id="current-time">0:00</span>
-                                    <span id="total-duration">0:00</span>
+                                    <span id="total-duration">0:30</span>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center align-items-center gap-4">
-                                <button type="button" class="btn-icono" aria-label="Anterior">@await Html.PartialAsync("_Icono", "prev")</button>
-                                <!-- Añadimos id="expanded-btn-play-pause" -->
-                                <button type="button" id="expanded-btn-play-pause" class="btn btn-accent btn-play btn-play-xl" aria-label="Pausar">@await Html.PartialAsync("_Icono", "play")</button>
-                                <button type="button" class="btn-icono" aria-label="Siguiente">@await Html.PartialAsync("_Icono", "next")</button>
+                                <button type="button" class="btn-icono" id="btnExpPrev" aria-label="Anterior">@await Html.PartialAsync("_Icono", "prev")</button>
+                                <button type="button" class="btn btn-accent btn-play btn-play-xl" id="expanded-btn-play-pause" aria-label="Reproducir/Pausar">@await Html.PartialAsync("_Icono", "play")</button>
+                                <button type="button" class="btn-icono" id="btnExpNext" aria-label="Siguiente">@await Html.PartialAsync("_Icono", "next")</button>
                             </div>
                         </div>
                     </div>
@@ -59,16 +55,8 @@
                     <div class="etiqueta px-2">REPRODUCIENDO</div>
                     <div class="cola-item sonando">
                         <span class="cover cover-md cover-oscuro"></span>
-                        <div>Canción de ejemplo<br /><small class="text-body-secondary">Artista</small></div>
+                        <div><span id="colaActualTitulo">Canción</span><br /><small class="text-body-secondary" id="colaActualArtista">Artista</small></div>
                     </div>
-                    <div class="etiqueta px-2 mt-2">A CONTINUACIÓN</div>
-                    @foreach (var c in DatosDemo.Cola())
-                    {
-                        <div class="cola-item">
-                            <span class="cover cover-md"></span>
-                            <div>@c.Titulo<br /><small class="text-body-secondary">@c.Artista</small></div>
-                        </div>
-                    }
                 </aside>
 
             </div>

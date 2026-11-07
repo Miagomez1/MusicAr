@@ -4,8 +4,9 @@ namespace MusicAr.Web.Models
         int Numero,
         string Titulo,
         string Artista,
-        string AudioUrl,
-        string CoverImageUrl,
+        string AudioUrl = "",
+        string? CoverImageUrl = null,
+        int? DurationInSeconds = null,
         bool Sonando = false
     );
 }

@@ -1,26 +1,24 @@
+@* Reproductor mini. Vive en el layout para que la música no se corte al navegar. *@
 <footer class="player panel" aria-label="Reproductor">
     <audio id="audio" preload="none"></audio>
 
     <div class="d-flex align-items-center gap-3">
-        <!-- Agregamos id="player-cover" y permitimos mostrar imagen de fondo -->
-        <div id="player-cover" class="cover cover-lg cover-plum" style="background-size: cover; background-position: center;"></div>
+        <div id="player-cover" class="cover cover-lg cover-plum overflow-hidden d-flex align-items-center justify-content-center" style="background-size: cover; background-position: center;">
+            <img id="playerMiniCover" src="" alt="Portada" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+        </div>
         <div>
-            <!-- Agregamos id="player-title" -->
-            <div id="player-title" class="fw-bold text-truncate" style="max-width: 180px;">Selecciona una canción</div>
-            <!-- Agregamos id="player-artist" -->
-            <small id="player-artist" class="text-body-secondary text-truncate" style="max-width: 180px;">-</small>
+            <div id="player-title" class="fw-bold text-truncate" style="max-width: 200px;">Sin reproducción</div>
+            <small id="player-artist" class="text-body-secondary text-truncate" style="max-width: 200px;">-</small>
         </div>
     </div>
 
     <div class="d-flex flex-column align-items-center gap-2 w-50">
         <div class="d-flex align-items-center gap-3">
-            <button type="button" class="btn-icono" aria-label="Anterior">@await Html.PartialAsync("_Icono", "prev")</button>
-            <!-- Agregamos id="btn-play-pause" al botón principal -->
+            <button type="button" class="btn-icono" id="btnPlayerPrev" aria-label="Anterior">@await Html.PartialAsync("_Icono", "prev")</button>
             <button type="button" id="btn-play-pause" class="btn btn-accent btn-play" aria-label="Reproducir/Pausar">@await Html.PartialAsync("_Icono", "play")</button>
-            <button type="button" class="btn-icono" aria-label="Siguiente">@await Html.PartialAsync("_Icono", "next")</button>
+            <button type="button" class="btn-icono" id="btnPlayerNext" aria-label="Siguiente">@await Html.PartialAsync("_Icono", "next")</button>
         </div>
 
-        <!-- Barra de progreso con id="progress-bar-container" y la barrita con id="progress-bar" -->
         <div class="progress w-100" role="progressbar" aria-label="Progreso de la canción" id="progress-bar-container" style="cursor: pointer; height: 6px;">
             <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
         </div>

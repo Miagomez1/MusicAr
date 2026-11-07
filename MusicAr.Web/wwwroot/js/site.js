@@ -1,100 +1,200 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
-    const audioElement = document.getElementById("audio");
+document.addEventListener('DOMContentLoaded', () => {
+    const audio = document.getElementById('audio');
+    if (!audio) return;
 
-    // Botones y elementos del Mini Player
-    const playPauseBtn = document.getElementById("btn-play-pause");
-    const playerTitle = document.getElementById("player-title");
-    const playerArtist = document.getElementById("player-artist");
-    const playerCover = document.getElementById("player-cover");
-    const progressBar = document.getElementById("progress-bar");
-    const progressContainer = document.getElementById("progress-bar-container");
+    const playSvg = "<path d='M8 5v14l11-7z'/>";
+    const pauseSvg = "<path d='M6 4h4v16H6zM14 4h4v16h-4z'/>";
 
-    // Botones y elementos del Player Expandido
-    const expandedPlayPauseBtn = document.getElementById("expanded-btn-play-pause");
-    const expandedTitle = document.getElementById("expanded-title");
-    const expandedArtist = document.getElementById("expanded-artist");
-    const expandedCover = document.getElementById("expanded-cover");
-    const expandedProgressBar = document.getElementById("expanded-progress-bar");
-    const expandedProgressContainer = document.getElementById("expanded-progress-container");
-    const currentTimeEl = document.getElementById("current-time");
-    const totalDurationEl = document.getElementById("total-duration");
+    // Elementos Mini
+    const miniTitulo = document.getElementById('player-title');
+    const miniArtista = document.getElementById('player-artist');
+    const miniCover = document.getElementById('player-cover');
+    const miniPlayBtn = document.getElementById('btn-play-pause');
+    const miniProgressContainer = document.getElementById('progress-bar-container');
+    const miniProgressBar = document.getElementById('progress-bar');
+    const btnPlayerPrev = document.getElementById('btnPlayerPrev');
+    const btnPlayerNext = document.getElementById('btnPlayerNext');
 
-    if (!audioElement) return;
+    // Elementos Expandido
+    const expTitulo = document.getElementById('expanded-title');
+    const expArtista = document.getElementById('expanded-artist');
+    const expCover = document.getElementById('expanded-cover');
+    const expCoverPlaceholder = document.getElementById('playerExpCoverPlaceholder');
+    const expPlayBtn = document.getElementById('expanded-btn-play-pause');
+    const expProgressContainer = document.getElementById('expanded-progress-container');
+    const expProgressBar = document.getElementById('expanded-progress-bar');
+    const currentTimeEl = document.getElementById('current-time');
+    const totalDurationEl = document.getElementById('total-duration');
+    const btnExpPrev = document.getElementById('btnExpPrev');
+    const btnExpNext = document.getElementById('btnExpNext');
 
-    // Función auxiliar para formatear segundos a MM:SS
+    let currentButton = null;
+
     function formatTime(seconds) {
-        if (isNaN(seconds)) return "0:00";
-        const minutes = Math.floor(seconds / 60);
+        if (isNaN(seconds) || seconds < 0) return "0:00";
+        const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
 
-    // 1. Reproducir al hacer clic en cualquier fila de canción
-    document.querySelectorAll(".song-row").forEach(row => {
-        row.addEventListener("click", function () {
-            const audioUrl = this.getAttribute("data-audio-url");
-            const title = this.getAttribute("data-title");
-            const artist = this.getAttribute("data-artist");
-            const cover = this.getAttribute("data-cover");
+    function setIcon(btn, isPlaying) {
+        if (!btn) return;
+        const svg = btn.querySelector('svg');
+        if (svg) {
+            svg.innerHTML = isPlaying ? pauseSvg : playSvg;
+        }
+        btn.setAttribute('aria-label', isPlaying ? 'Pausar' : 'Reproducir');
+    }
 
-            if (!audioUrl) return;
-
-            // Actualizamos textos e imágenes en AMBOS reproductores
-            if (playerTitle) playerTitle.textContent = title;
-            if (expandedTitle) expandedTitle.textContent = title;
-
-            if (playerArtist) playerArtist.textContent = artist;
-            if (expandedArtist) expandedArtist.textContent = artist;
-
-            if (cover) {
-                if (playerCover) playerCover.style.backgroundImage = `url('${cover}')`;
-                if (expandedCover) expandedCover.style.backgroundImage = `url('${cover}')`;
+    function updateTrackInfo(titulo, artista, coverUrl) {
+        if (miniTitulo) miniTitulo.textContent = titulo;
+        if (miniArtista) miniArtista.textContent = artista;
+        if (miniCover) {
+            if (coverUrl) {
+                miniCover.style.backgroundImage = `url('${coverUrl}')`;
+            } else {
+                miniCover.style.backgroundImage = '';
             }
+        }
 
-            // Reproducir audio
-            audioElement.src = audioUrl;
-            audioElement.play().catch(err => console.error("Error al reproducir:", err));
+        if (expTitulo) expTitulo.textContent = titulo;
+        if (expArtista) expArtista.textContent = artista;
+        if (expCover) {
+            if (coverUrl) {
+                expCover.style.backgroundImage = `url('${coverUrl}')`;
+                if (expCoverPlaceholder) expCoverPlaceholder.style.display = 'none';
+            } else {
+                expCover.style.backgroundImage = '';
+                if (expCoverPlaceholder) expCoverPlaceholder.style.display = 'block';
+            }
+        }
+
+        const colaTit = document.getElementById('colaActualTitulo');
+        const colaArt = document.getElementById('colaActualArtista');
+        if (colaTit) colaTit.textContent = titulo;
+        if (colaArt) colaArt.textContent = artista;
+    }
+
+    function playTrack(btn) {
+        const fila = btn.closest('.fila') || btn;
+        const audioUrl = btn.dataset.audio || fila.dataset.audioUrl || btn.dataset.audioUrl;
+        const titulo = btn.dataset.titulo || fila.dataset.title || btn.dataset.title || 'Canción';
+        const artista = btn.dataset.artista || fila.dataset.artist || btn.dataset.artist || 'Artista';
+        const cover = btn.dataset.cover || fila.dataset.cover || '';
+
+        if (!audioUrl) return;
+
+        // Si es la misma canción ya cargada
+        if (audio.src === audioUrl) {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+            return;
+        }
+
+        // Nueva canción seleccionada
+        if (currentButton && currentButton !== btn) {
+            setIcon(currentButton, false);
+            const filaVieja = currentButton.closest('.fila');
+            if (filaVieja) filaVieja.classList.remove('sonando');
+        }
+
+        currentButton = btn;
+        const filaActual = btn.closest('.fila');
+        if (filaActual) filaActual.classList.add('sonando');
+
+        audio.src = audioUrl;
+        audio.play().catch(e => console.warn("Error al reproducir audio:", e));
+
+        updateTrackInfo(titulo, artista, cover);
+    }
+
+    // Clic en cualquier fila o botón Play
+    document.addEventListener('click', (e) => {
+        const btnPlay = e.target.closest('.fila .btn-play');
+        if (btnPlay) {
+            e.preventDefault();
+            playTrack(btnPlay);
+            return;
+        }
+
+        const songRow = e.target.closest('.song-row');
+        if (songRow && !e.target.closest('button')) {
+            const playInRow = songRow.querySelector('.btn-play') || songRow;
+            playTrack(playInRow);
+        }
+    });
+
+    // Control Play/Pausa en la barra inferior
+    if (miniPlayBtn) {
+        miniPlayBtn.addEventListener('click', () => {
+            if (!audio.src) return;
+            if (audio.paused) audio.play(); else audio.pause();
         });
-    });
-
-    // 2. Control unificado de Play / Pausa
-    function togglePlayPause() {
-        if (!audioElement.src) return;
-        if (audioElement.paused) {
-            audioElement.play();
-        } else {
-            audioElement.pause();
-        }
     }
 
-    if (playPauseBtn) playPauseBtn.addEventListener("click", togglePlayPause);
-    if (expandedPlayPauseBtn) expandedPlayPauseBtn.addEventListener("click", togglePlayPause);
+    // Control Play/Pausa en el modal expandido
+    if (expPlayBtn) {
+        expPlayBtn.addEventListener('click', () => {
+            if (!audio.src) return;
+            if (audio.paused) audio.play(); else audio.pause();
+        });
+    }
 
-    // 3. Actualizar barras de progreso y tiempos
-    audioElement.addEventListener("timeupdate", function () {
-        if (audioElement.duration) {
-            const percent = (audioElement.currentTime / audioElement.duration) * 100;
-
-            if (progressBar) progressBar.style.width = `${percent}%`;
-            if (expandedProgressBar) expandedProgressBar.style.width = `${percent}%`;
-
-            if (currentTimeEl) currentTimeEl.textContent = formatTime(audioElement.currentTime);
-            if (totalDurationEl) totalDurationEl.textContent = formatTime(audioElement.duration);
-        }
+    // Eventos nativos del elemento <audio>
+    audio.addEventListener('play', () => {
+        setIcon(currentButton, true);
+        setIcon(miniPlayBtn, true);
+        setIcon(expPlayBtn, true);
     });
 
-    // 4. Saltar en la canción haciendo clic en las barras de progreso
-    function seekAudio(e, container) {
-        if (!audioElement.duration) return;
-        const rect = container.getBoundingClientRect();
+    audio.addEventListener('pause', () => {
+        setIcon(currentButton, false);
+        setIcon(miniPlayBtn, false);
+        setIcon(expPlayBtn, false);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+        if (!audio.duration) return;
+        const pct = (audio.currentTime / audio.duration) * 100;
+        if (miniProgressBar) miniProgressBar.style.width = `${pct}%`;
+        if (expProgressBar) expProgressBar.style.width = `${pct}%`;
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+        if (totalDurationEl) totalDurationEl.textContent = formatTime(audio.duration);
+    });
+
+    function playNext() {
+        const buttons = Array.from(document.querySelectorAll('.fila .btn-play'));
+        if (!buttons.length) return;
+        const idx = buttons.indexOf(currentButton);
+        const nextIdx = (idx + 1) % buttons.length;
+        playTrack(buttons[nextIdx]);
+    }
+
+    function playPrev() {
+        const buttons = Array.from(document.querySelectorAll('.fila .btn-play'));
+        if (!buttons.length) return;
+        const idx = buttons.indexOf(currentButton);
+        const prevIdx = (idx - 1 + buttons.length) % buttons.length;
+        playTrack(buttons[prevIdx]);
+    }
+
+    audio.addEventListener('ended', playNext);
+
+    if (btnPlayerNext) btnPlayerNext.addEventListener('click', playNext);
+    if (btnExpNext) btnExpNext.addEventListener('click', playNext);
+    if (btnPlayerPrev) btnPlayerPrev.addEventListener('click', playPrev);
+    if (btnExpPrev) btnExpPrev.addEventListener('click', playPrev);
+
+    function seek(e, bar) {
+        if (!audio.duration) return;
+        const rect = bar.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
-        audioElement.currentTime = (clickX / rect.width) * audioElement.duration;
+        audio.currentTime = (clickX / rect.width) * audio.duration;
     }
 
-    if (progressContainer) {
-        progressContainer.addEventListener("click", (e) => seekAudio(e, progressContainer));
-    }
-    if (expandedProgressContainer) {
-        expandedProgressContainer.addEventListener("click", (e) => seekAudio(e, expandedProgressContainer));
-    }
+    if (miniProgressContainer) miniProgressContainer.addEventListener('click', (e) => seek(e, miniProgressContainer));
+    if (expProgressContainer) expProgressContainer.addEventListener('click', (e) => seek(e, expProgressContainer));
 });
