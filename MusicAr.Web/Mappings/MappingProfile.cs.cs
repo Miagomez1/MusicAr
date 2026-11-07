@@ -17,6 +17,8 @@ namespace MusicAr.Web.Mappings
                     // Asigna plum, lime o gray de forma determinista usando el Id del género
                     AcentosValidos[Math.Abs(src.Id) % AcentosValidos.Length]
                 ));
+
+            CreateMap<CancionDto, CancionViewModel>();
         }
     }
 }

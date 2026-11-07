@@ -1,9 +1,24 @@
+@model MusicAr.Web.Models.BuscadorViewModel
 <div class="d-flex align-items-center gap-3">
     @* TODO: apuntar a la acción de búsqueda cuando exista *@
-    <form class="buscador d-flex align-items-center gap-2 flex-grow-1 px-3" role="search" method="get" asp-controller="Home" asp-action="Index">
+    <form class="buscador d-flex align-items-center gap-2 flex-grow-1 px-3" 
+          role="search" 
+          method="get" 
+          asp-controller="Buscador" 
+          asp-action="Buscar">
+        
         @await Html.PartialAsync("_Icono", "search")
-        <input type="search" name="q" class="form-control border-0 bg-transparent shadow-none px-0"
-               placeholder="¿Qué querés escuchar?" aria-label="Buscador" />
+        
+        <input type="search" 
+               asp-for="Q" 
+               class="form-control border-0 bg-transparent shadow-none px-0"
+               placeholder="¿Qué querés escuchar?" 
+               aria-label="Buscador" />
+        
+        <button type="submit" class="btn p-0 border-0 bg-transparent" aria-label="Buscar">
+            @* Botón de envío que envia el formulario al presionar Enter o hacer click *@
+            <span class="visually-hidden">Buscar</span>
+        </button>
     </form>
     <a class="btn btn-accent rounded-pill px-4" asp-controller="Cuenta" asp-action="Login">Iniciar sesión</a>
 </div>

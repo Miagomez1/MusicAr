@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MusicAr.Logica;
+using MusicAr.DTO;
 using MusicAr.Infraestructura;
 using MusicAr.Infraestructura.DTOs;
+using MusicAr.Logica;
 
 namespace MusicAr.ApiCatalog.Controllers
 {
@@ -24,6 +25,18 @@ namespace MusicAr.ApiCatalog.Controllers
         {
             var generos = await _catalogoService.ObtenerGenerosAsync();
             return Ok(generos);
+        }
+
+        [HttpGet("buscar")]
+        public async Task<IActionResult> Buscar([FromQuery] string q)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+            {
+                return Ok(new List<CancionDto>());
+            }
+
+            var resultado = await _catalogoService.BuscarCancionesAsync(q);
+            return Ok(resultado);
         }
 
         [HttpGet]
