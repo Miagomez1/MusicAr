@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MusicAr.Infraestructura\MusicAr.Infraestructura.csproj" />
+    <ProjectReference Include="..\MusicAr.Logica\MusicAr.Logica.csproj" />
   </ItemGroup>
 
 </Project>

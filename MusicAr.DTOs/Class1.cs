@@ -1,4 +1,4 @@
-﻿namespace MusicAr.Logica
+﻿namespace MusicAr.DTOs
 {
     public class Class1
     {

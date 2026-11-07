@@ -1,7 +1,16 @@
+using MusicAr.Web.Mappings;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile(typeof(MappingProfile)));
+
+builder.Services.AddHttpClient("ApiGatewayClient", client =>
+{ 
+    client.BaseAddress = new Uri("https://localhost:7224/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
 var app = builder.Build();
 
