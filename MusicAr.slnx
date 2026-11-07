@@ -8,5 +8,6 @@
   </Folder>
   <Project Path="MusicAr.ApiGateway/MusicAr.ApiGateway.csproj" />
   <Project Path="MusicAr.AuthService/MusicAr.AuthService.csproj" />
+  <Project Path="MusicAr.DTO/MusicAr.DTO.csproj" Id="eac6d20c-dff4-43f6-bb72-3d7191bfe4b8" />
   <Project Path="MusicAr.Web/MusicAr.Web.csproj" />
 </Solution>

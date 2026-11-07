@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MusicAr.DTO\MusicAr.DTO.csproj" />
+    <ProjectReference Include="..\MusicAr.Infraestructura\MusicAr.Infraestructura.csproj" />
+  </ItemGroup>
+
 </Project>

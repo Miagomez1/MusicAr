@@ -1,19 +1,30 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MusicAr.Logica;
 using MusicAr.Infraestructura;
 
 namespace MusicAr.ApiCatalog.Controllers
 {
     [ApiController]
-    [Route("api/canciones")]
+    [Route("api/[controller]")]
     public class CancionesController : ControllerBase
     {
         private readonly CatalogoDBContext _context;
+        private readonly ICatalogoService _catalogoService;
 
-        public CancionesController(CatalogoDBContext context)
+        public CancionesController(CatalogoDBContext context, ICatalogoService catalogoService)
         {
             _context = context;
+            _catalogoService = catalogoService;
+        }
+
+
+        [HttpGet("generos")] 
+        public async Task<IActionResult> Generos()
+        {
+            var generos = await _catalogoService.ObtenerGenerosAsync();
+            return Ok(generos);
         }
 
         [HttpGet]

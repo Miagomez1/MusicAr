@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MusicAr.Logica;
 using MusicAr.Infraestructura;
 using MusicAr.Infraestructura.Services;
 
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<CatalogoDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpClient<CatalogSeederService>();
 
+builder.Services.AddScoped<ICatalogoService, CatalogoService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
