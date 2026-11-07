@@ -21,6 +21,41 @@ namespace MusicAr.AuthService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("MusicAr.AuthService.Models.Playlist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Playlists");
+                });
+
+            modelBuilder.Entity("MusicAr.AuthService.Models.PlaylistCancion", b =>
+                {
+                    b.Property<int>("PlaylistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CancionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlaylistId", "CancionId");
+
+                    b.ToTable("PlaylistCanciones");
+                });
+
             modelBuilder.Entity("MusicAr.AuthService.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -44,6 +79,33 @@ namespace MusicAr.AuthService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("MusicAr.AuthService.Models.Playlist", b =>
+                {
+                    b.HasOne("MusicAr.AuthService.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("MusicAr.AuthService.Models.PlaylistCancion", b =>
+                {
+                    b.HasOne("MusicAr.AuthService.Models.Playlist", "Playlist")
+                        .WithMany("Canciones")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Playlist");
+                });
+
+            modelBuilder.Entity("MusicAr.AuthService.Models.Playlist", b =>
+                {
+                    b.Navigation("Canciones");
                 });
 #pragma warning restore 612, 618
         }

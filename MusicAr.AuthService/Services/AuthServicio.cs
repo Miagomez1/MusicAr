@@ -10,13 +10,13 @@ using System.Text;
 
 namespace MusicAr.AuthService.Services
 {
-    public class AuthService
+    public class AuthServicio
     {
         private readonly AuthDbContext _context;
         private readonly PasswordHasher<Usuario> _passwordHasher;
         private readonly IConfiguration _configuration;
 
-        public AuthService(AuthDbContext context, IConfiguration configuration)
+        public AuthServicio(AuthDbContext context, IConfiguration configuration)
         {
             _context = context;
             _passwordHasher = new PasswordHasher<Usuario>();

@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -18,12 +17,14 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
+builder.Services.AddScoped<AuthServicio>();
+builder.Services.AddScoped<IPlaylistService, PlaylistService>();   // <-- si ya existe el servicio
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-    context.Database.EnsureCreated();
+    context.Database.Migrate();   // <-- en lugar de EnsureCreated
     AuthInicio.Inicializar(context);
 }
 // Configure the HTTP request pipeline.

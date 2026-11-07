@@ -4,3 +4,7 @@ GET {{MusicAr.AuthService_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+POST http://localhost:5194/api/playlists
+Content-Type: application/json
+
+{ "nombre": "Mi primera playlist" }

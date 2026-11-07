@@ -7,6 +7,7 @@ namespace MusicAr.Web.Models
         string AudioUrl = "",
         string? CoverImageUrl = null,
         int? DurationInSeconds = null,
-        bool Sonando = false
+        bool Sonando = false,
+        int Id = 0
     );
 }
