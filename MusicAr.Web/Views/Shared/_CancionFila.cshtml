@@ -1,7 +1,13 @@
 @model CancionViewModel
-<div class="fila @(Model.Sonando ? "sonando" : "")">
+
+<div class="fila song-row @(Model.Sonando ? "sonando" : "")"
+     data-audio-url="@Model.AudioUrl"
+     data-title="@Model.Titulo"
+     data-artist="@Model.Artista"
+     data-cover="@Model.CoverImageUrl">
+
     <span class="num">@Model.Numero</span>
-    <span class="cover cover-md"></span>
+    <span class="cover cover-md" style="@(!string.IsNullOrEmpty(Model.CoverImageUrl) ? $"background-image: url('{Model.CoverImageUrl}'); background-size: cover; background-position: center;" : "")"></span>
     <div>
         <div>@Model.Titulo</div>
         <small class="text-body-secondary">@Model.Artista</small>

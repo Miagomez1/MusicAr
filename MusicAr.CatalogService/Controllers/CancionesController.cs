@@ -48,5 +48,43 @@ namespace MusicAr.ApiCatalog.Controllers
 
             return Ok(canciones);
         }
+
+        [HttpGet("generos/{id}/canciones")]
+        public async Task<IActionResult> ObtenerDetalleGenero(int id)
+        {
+            // 1. Obtenemos el género para saber su nombre (usando tu servicio existente)
+            var generos = await _catalogoService.ObtenerGenerosAsync();
+            var genero = generos.FirstOrDefault(g => g.Id == id);
+
+            if (genero == null)
+            {
+                return NotFound();
+            }
+
+            // 2. Buscamos las canciones que pertenecen a ese género
+            var canciones = await _context.Canciones
+                .AsNoTracking()
+                .Where(c => c.GeneroId == id)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Titulo,
+                    c.DurationInSeconds,
+                    c.AudioUrl,
+                    c.CoverImageUrl,
+                    Genero = genero.Nombre,
+                    Artista = c.Artista != null ? c.Artista.Name : "Desconocido"
+                })
+                .ToListAsync();
+
+            // 3. Empaquetamos ambos datos para que coincidan con el GeneroDetalleViewModel de la Web
+            var resultado = new
+            {
+                Nombre = genero.Nombre,
+                Canciones = canciones
+            };
+
+            return Ok(resultado);
+        }
     }
 }

@@ -5,19 +5,35 @@ namespace MusicAr.Web.Controllers
 {
     public class GenerosController : Controller
     {
-        // /Generos/Detalle/5
-        public IActionResult Detalle(int id)
-        {
-            // TODO: pedir el género y sus canciones al CatalogService
-            var genero = DatosDemo.Generos.FirstOrDefault(g => g.Id == id);
-            if (genero is null) return NotFound();
+        private readonly IHttpClientFactory _httpClientFactory;
 
-            var vm = new GeneroDetalleViewModel
+        public GenerosController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
+        // /Generos/Detalle/5
+        public async Task<IActionResult> Detalle(int id)
+        {
+            var client = _httpClientFactory.CreateClient("ApiGatewayClient");
+
+            try
             {
-                Nombre = genero.Nombre,
-                Canciones = DatosDemo.Canciones()
-            };
-            return View(vm);
+                // Hacemos la petición al API Gateway para obtener el detalle del género y sus canciones
+                var vm = await client.GetFromJsonAsync<GeneroDetalleViewModel>($"api/canciones/generos/{id}/canciones");
+
+                if (vm is null || string.IsNullOrEmpty(vm.Nombre))
+                {
+                    return NotFound();
+                }
+
+                return View(vm);
+            }
+            catch (HttpRequestException)
+            {
+                // Si ocurre un error de red o el microservicio no responde
+                return NotFound();
+            }
         }
     }
 }
