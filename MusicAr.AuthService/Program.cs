@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MusicAr.AuthService.Data;
-
+using MusicAr.AuthService.Services;   
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
+builder.Services.AddScoped<AuthServicio>();   
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {

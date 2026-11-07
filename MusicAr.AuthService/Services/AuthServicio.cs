@@ -5,12 +5,12 @@ using MusicAr.AuthService.Models;
 
 namespace MusicAr.AuthService.Services
 {
-    public class AuthService
+    public class AuthServicio
     {
         private readonly AuthDbContext _context;
         private readonly PasswordHasher<Usuario> _passwordHasher;
 
-        public AuthService(AuthDbContext context)
+        public AuthServicio(AuthDbContext context)
         {
             _context = context;
             _passwordHasher = new PasswordHasher<Usuario>();

@@ -24,4 +24,8 @@
     <Folder Include="DTOs\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MusicAr.DTO\MusicAr.DTO.csproj" />
+  </ItemGroup>
+
 </Project>

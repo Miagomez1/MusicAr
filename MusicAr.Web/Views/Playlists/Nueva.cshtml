@@ -4,6 +4,7 @@
 }
 
 <form asp-action="Nueva" method="post" class="d-flex flex-column gap-4">
+    <div asp-validation-summary="ModelOnly" class="text-danger-emphasis"></div>
     <section class="playlist-header d-flex align-items-end gap-4 p-4">
         <div class="cover cover-xl cover-oscuro centrado">@await Html.PartialAsync("_Icono", "nota")</div>
         <div class="flex-grow-1">

@@ -10,5 +10,13 @@ namespace MusicAr.AuthService.Data
         }
 
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Playlist> Playlists { get; set; }
+        public DbSet<PlaylistCancion> PlaylistCanciones { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PlaylistCancion>()
+                .HasKey(pc => new { pc.PlaylistId, pc.CancionId });
+        }
     }
 }
