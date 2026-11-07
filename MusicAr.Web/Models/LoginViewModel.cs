@@ -12,6 +12,6 @@ namespace MusicAr.Web.Models
         [Required(ErrorMessage = "Ingresá tu contraseña")]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]
-        public string Pass { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

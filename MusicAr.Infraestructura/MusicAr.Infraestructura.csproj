@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MusicAr.DTO\MusicAr.DTO.csproj" />
     <ProjectReference Include="..\MusicAr.Entidades\MusicAr.Entidades.csproj" />
   </ItemGroup>
 

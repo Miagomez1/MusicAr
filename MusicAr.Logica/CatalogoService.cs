@@ -42,11 +42,21 @@ namespace MusicAr.Logica
                 })
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<CancionDto>> BuscarCancionesAsync(string termino)
+        {
+            return await _context.BuscarCancionesPorTextoAsync(termino);
+        }
+
+       
     }
 
     public interface ICatalogoService
     {
         Task<List<GeneroDto>> ObtenerGenerosAsync();
         Task<List<CancionDto>> ObtenerCancionesPorGeneroAsync(int generoId);
+        Task<IEnumerable<CancionDto>> BuscarCancionesAsync(string termino);
+
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MusicAr.DTO;
 using MusicAr.Entidades;
 
 namespace MusicAr.Infraestructura
@@ -11,5 +12,26 @@ namespace MusicAr.Infraestructura
 
         public CatalogoDBContext(DbContextOptions<CatalogoDBContext> options) : base(options)
         { }
+
+        public async Task<List<CancionDto>> BuscarCancionesPorTextoAsync(string termino)
+        {
+            string filtro = termino.Trim().ToLower();
+
+            return await Canciones
+                .Include(c => c.Artista)
+                .AsNoTracking()
+                .Where(c => c.Titulo.ToLower().Contains(filtro) ||
+                            (c.Artista != null && c.Artista.Name.ToLower().Contains(filtro)))
+                .Select(c => new CancionDto
+                {
+                    Id = c.Id,
+                    Titulo = c.Titulo,
+                    DurationInSeconds = c.DurationInSeconds,
+                    Artista = c.Artista != null ? c.Artista.Name : string.Empty,
+                    CoverImageUrl = c.CoverImageUrl,
+                    AudioUrl = $"http://localhost:5086/api/canciones/{c.Id}/audio"
+                })
+                .ToListAsync();
+        }
     }
 }

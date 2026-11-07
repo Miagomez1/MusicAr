@@ -1,0 +1,23 @@
+﻿@model MusicAr.Web.Models.BuscadorViewModel
+<section class="d-flex align-items-center gap-3">
+    <div>
+        <div class="etiqueta">Resultados</div>
+        <h1 class="display-5 fw-bold mb-0">@Model.Q</h1>
+    </div>
+</section>
+
+
+
+@if (Model.Canciones != null && Model.Canciones.Any())
+{
+    @foreach (var cancion in Model.Canciones)
+    {
+        <partial name="_CancionFila" model="cancion" />
+    }
+}
+else
+{
+    <div class="alert alert-warning my-3" role="alert">
+        No se encontraron resultados para "<strong>@Model.Q</strong>".
+    </div>
+}

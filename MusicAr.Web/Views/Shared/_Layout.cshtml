@@ -14,7 +14,7 @@
         <div class="d-flex flex-grow-1 gap-2 overflow-hidden">
             <partial name="_Sidebar" />
             <main role="main" class="panel contenido flex-grow-1 overflow-auto p-4 d-flex flex-column gap-4">
-                <partial name="_TopBar" />
+                <partial name="_TopBar" model="new MusicAr.Web.Models.BuscadorViewModel()" />
                 @RenderBody()
             </main>
         </div>
