@@ -3,16 +3,17 @@
 @{
     var contenido = Model switch
     {
-        "home"    => "<path d='M4 11l8-7 8 7v9h-5v-6H9v6H4z'/>",
-        "heart"   => "<path d='M12 20s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z'/>",
-        "plus"    => "<path d='M12 5v14M5 12h14'/>",
-        "search"  => "<circle cx='11' cy='11' r='7'/><path d='M20 20l-4-4'/>",
-        "play"    => "<path d='M8 5v14l11-7z'/>",
-        "prev"    => "<path d='M6 5v14M19 5L9 12l10 7z'/>",
-        "next"    => "<path d='M18 5v14M5 5l10 7-10 7z'/>",
-        "nota"    => "<path d='M9 18V5l11-2v13'/><circle cx='6' cy='18' r='3'/><circle cx='17' cy='16' r='3'/>",
+        "home" => "<path d='M4 11l8-7 8 7v9h-5v-6H9v6H4z'/>",
+        "heart" => "<path d='M12 20s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z'/>",
+        "plus" => "<path d='M12 5v14M5 12h14'/>",
+        "search" => "<circle cx='11' cy='11' r='7'/><path d='M20 20l-4-4'/>",
+        "play" => "<path d='M8 5v14l11-7z'/>",
+        "pause" => "<path d='M6 4h4v16H6zM14 4h4v16h-4z'/>",
+        "prev" => "<path d='M6 5v14M19 5L9 12l10 7z'/>",
+        "next" => "<path d='M18 5v14M5 5l10 7-10 7z'/>",
+        "nota" => "<path d='M9 18V5l11-2v13'/><circle cx='6' cy='18' r='3'/><circle cx='17' cy='16' r='3'/>",
         "chevron" => "<path d='M6 9l6 6 6-6'/>",
-        _         => string.Empty
+        _ => string.Empty
     };
 }
 <svg class="icono" viewBox="0 0 24 24" aria-hidden="true">@Html.Raw(contenido)</svg>

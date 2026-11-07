@@ -7,8 +7,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile(typeof(MappingProfile)));
 
 builder.Services.AddHttpClient("ApiGatewayClient", client =>
-{ 
-    client.BaseAddress = new Uri("https://localhost:7224/");
+{
+    client.BaseAddress = new Uri("http://localhost:5086/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 

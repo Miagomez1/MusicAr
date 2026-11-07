@@ -13,32 +13,38 @@
                         </div>
                         <div class="col-4 text-center">
                             <div class="etiqueta" id="playerExpandidoTitulo">REPRODUCIENDO DESDE</div>
-                            <div class="fw-semibold">Jazz</div>
+                            <div class="fw-semibold" id="playerExpGenero">MusicAr</div>
                         </div>
                     </div>
 
                     <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center gap-4">
-                        <div class="cover cover-plum cover-xxl">@await Html.PartialAsync("_Icono", "nota")</div>
+                        <div class="cover cover-plum cover-xxl overflow-hidden d-flex align-items-center justify-content-center" id="playerExpCoverContainer">
+                            <img id="playerExpCover" src="" alt="Portada" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                            <span id="playerExpCoverPlaceholder">@await Html.PartialAsync("_Icono", "nota")</span>
+                        </div>
 
                         <div class="col-reproductor d-flex flex-column gap-3">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
-                                    <div class="fs-4 fw-bold">Canción de ejemplo</div>
-                                    <div class="text-body-secondary">Artista</div>
+                                    <div class="fs-4 fw-bold" id="playerExpTitulo">Sin reproducción</div>
+                                    <div class="text-body-secondary" id="playerExpArtista">-</div>
                                 </div>
                                 <button type="button" class="btn-icono" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
                                 <button type="button" class="btn-icono" aria-label="Agregar a una playlist">@await Html.PartialAsync("_Icono", "plus")</button>
                             </div>
                             <div>
-                                <div class="progress" role="progressbar" aria-label="Progreso de la canción" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar" style="width: 35%"></div>
+                                <div class="progress" id="playerExpProgressBar" style="cursor: pointer;" role="progressbar" aria-label="Progreso de la canción" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" id="playerExpProgressFill" style="width: 0%"></div>
                                 </div>
-                                <div class="d-flex justify-content-between small text-body-secondary mt-2"><span>1:12</span><span>3:40</span></div>
+                                <div class="d-flex justify-content-between small text-body-secondary mt-2">
+                                    <span id="playerExpCurrentTime">0:00</span>
+                                    <span id="playerExpTotalTime">0:30</span>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-center align-items-center gap-4">
-                                <button type="button" class="btn-icono" aria-label="Anterior">@await Html.PartialAsync("_Icono", "prev")</button>
-                                <button type="button" class="btn btn-accent btn-play btn-play-xl" aria-label="Pausar">@await Html.PartialAsync("_Icono", "play")</button>
-                                <button type="button" class="btn-icono" aria-label="Siguiente">@await Html.PartialAsync("_Icono", "next")</button>
+                                <button type="button" class="btn-icono" id="btnExpPrev" aria-label="Anterior">@await Html.PartialAsync("_Icono", "prev")</button>
+                                <button type="button" class="btn btn-accent btn-play btn-play-xl" id="btnExpPlay" aria-label="Reproducir">@await Html.PartialAsync("_Icono", "play")</button>
+                                <button type="button" class="btn-icono" id="btnExpNext" aria-label="Siguiente">@await Html.PartialAsync("_Icono", "next")</button>
                             </div>
                         </div>
                     </div>
@@ -49,17 +55,8 @@
                     <div class="etiqueta px-2">REPRODUCIENDO</div>
                     <div class="cola-item sonando">
                         <span class="cover cover-md cover-oscuro"></span>
-                        <div>Canción de ejemplo<br /><small class="text-body-secondary">Artista</small></div>
+                        <div><span id="colaActualTitulo">Canción</span><br /><small class="text-body-secondary" id="colaActualArtista">Artista</small></div>
                     </div>
-                    <div class="etiqueta px-2 mt-2">A CONTINUACIÓN</div>
-                    @* TODO: la cola real sale de la lista (género o playlist) desde la que se dio play *@
-                    @foreach (var c in DatosDemo.Cola())
-                    {
-                        <div class="cola-item">
-                            <span class="cover cover-md"></span>
-                            <div>@c.Titulo<br /><small class="text-body-secondary">@c.Artista</small></div>
-                        </div>
-                    }
                 </aside>
 
             </div>

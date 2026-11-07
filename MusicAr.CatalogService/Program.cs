@@ -14,6 +14,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<CatalogoDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpClient<CatalogSeederService>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<ICatalogoService, CatalogoService>();
 builder.Services.AddEndpointsApiExplorer();
