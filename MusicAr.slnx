@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/Docker/">
+    <File Path=".dockerignore" />
+    <File Path=".env" />
+    <File Path=".envEjemplo" />
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Folder Name="/Services/" />
   <Folder Name="/Services/Catalog/">
     <Project Path="MusicAr.CatalogService/MusicAr.ApiCatalog.csproj" />

@@ -13,10 +13,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile(typeof(MappingProfile)));
-
+/*
 builder.Services.AddHttpClient("ApiGatewayClient", client =>
 {
     client.BaseAddress = new Uri("http://localhost:5086/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});*/
+var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"]
+                 ?? "http://localhost:5086/";
+
+builder.Services.AddHttpClient("ApiGatewayClient", client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 

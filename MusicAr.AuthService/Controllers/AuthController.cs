@@ -8,9 +8,9 @@ namespace MusicAr.AuthService.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly MusicAr.AuthService.Services.AuthService _authService;
+        private readonly MusicAr.AuthService.Services.AuthServicio _authService;
 
-        public AuthController(MusicAr.AuthService.Services.AuthService authService)
+        public AuthController(MusicAr.AuthService.Services.AuthServicio authService)
         {
             _authService = authService;
         }
