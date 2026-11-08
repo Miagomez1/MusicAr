@@ -22,6 +22,32 @@ services:
       ASPNETCORE_ENVIRONMENT: "Development"
     depends_on:
       - catalogo-service
+      - auth-service
+    networks:
+      - musicar-net
+  auth-service:
+    build:
+      context: .
+      dockerfile: ./MusicAr.AuthService/Dockerfile
+    ports:
+      - "5185:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "${AUTH_DB_CONNECTION}"
+    networks:
+      - musicar-net
+  web:
+    build:
+      context: .
+      dockerfile: ./MusicAr.Web/Dockerfile
+    ports:
+      - "5186:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      ApiSettings__BaseUrl: "http://api-gateway:8080/"
+    depends_on:
+      - api-gateway
     networks:
       - musicar-net
 
