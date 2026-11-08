@@ -1,6 +1,14 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using MusicAr.Web.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/Login"; 
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -23,8 +31,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -36,3 +47,7 @@ app.MapControllerRoute(
 
 
 app.Run();
+
+
+
+

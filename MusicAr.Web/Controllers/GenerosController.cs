@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicAr.DTO;
 using MusicAr.Web.Models;
@@ -14,6 +15,7 @@ namespace MusicAr.Web.Controllers
         }
 
         // /Generos/Detalle/5
+       
         public async Task<IActionResult> Detalle(int id)
         {
             var client = _httpClientFactory.CreateClient("ApiGatewayClient");
