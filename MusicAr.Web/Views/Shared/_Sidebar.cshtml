@@ -11,8 +11,9 @@
             </a>
         </li>
         <li class="nav-item">
-            @* TODO: enlazar a Favoritos cuando exista esa vista *@
-            <a class="nav-link d-flex align-items-center gap-2" href="#">@await Html.PartialAsync("_Icono", "heart") Favoritos</a>
+            <a class="nav-link d-flex align-items-center gap-2 @(ctrl == "Favoritos" ? "active" : "")" asp-controller="Favoritos" asp-action="Index">
+                @await Html.PartialAsync("_Icono", "heart") Favoritos
+            </a>
         </li>
     </ul>
 
@@ -21,7 +22,6 @@
         <a class="btn-icono borde" asp-controller="Playlists" asp-action="Nueva" aria-label="Crear playlist">@await Html.PartialAsync("_Icono", "plus")</a>
     </div>
 
-    @* TODO: reemplazar por las playlists reales del usuario (servicio de Playlists) *@
     <ul class="nav nav-pills flex-column gap-1">
         @if (ctrl == "Playlists")
         {

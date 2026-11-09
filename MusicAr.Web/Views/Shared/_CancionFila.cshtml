@@ -1,11 +1,11 @@
 @model CancionViewModel
 
-
 <div class="fila song-row @(Model.Sonando ? "sonando" : "")"
      data-audio-url="@Model.AudioUrl"
      data-title="@Model.Titulo"
      data-artist="@Model.Artista"
-     data-cover="@Model.CoverImageUrl">
+     data-cover="@Model.CoverImageUrl"
+     data-id="@Model.Id">
 
     <span class="num">@Model.Numero</span>
     @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
@@ -21,14 +21,15 @@
         <small class="text-body-secondary">@Model.Artista</small>
     </div>
     <div class="d-flex align-items-center gap-1">
-        <button type="button" class="btn-icono" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
+        <button type="button" class="btn-icono btn-favorito" data-cancion-id="@Model.Id" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
         <button type="button" class="btn-icono" aria-label="Agregar a una playlist">@await Html.PartialAsync("_Icono", "plus")</button>
         <button type="button" class="btn btn-accent btn-play"
                 aria-label="Reproducir"
                 data-audio="@Model.AudioUrl"
                 data-titulo="@Model.Titulo"
                 data-artista="@Model.Artista"
-                data-cover="@Model.CoverImageUrl">
+                data-cover="@Model.CoverImageUrl"
+                data-id="@Model.Id">
             @await Html.PartialAsync("_Icono", "play")
         </button>
     </div>

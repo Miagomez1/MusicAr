@@ -1,4 +1,3 @@
-@* Reproductor expandido: modal de pantalla completa de Bootstrap (no navega, así la música sigue sonando). *@
 <div class="modal fade" id="playerExpandido" tabindex="-1" aria-labelledby="playerExpandidoTitulo" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content p-2">
@@ -29,7 +28,7 @@
                                     <div id="expanded-title" class="fs-4 fw-bold">Sin reproducción</div>
                                     <div id="expanded-artist" class="text-body-secondary">-</div>
                                 </div>
-                                <button type="button" class="btn-icono" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
+                                <button type="button" class="btn-icono btn-favorito-player" id="btnPlayerFavorito" aria-label="Agregar a favoritos">@await Html.PartialAsync("_Icono", "heart")</button>
                                 <button type="button" class="btn-icono" aria-label="Agregar a una playlist">@await Html.PartialAsync("_Icono", "plus")</button>
                             </div>
                             <div>
@@ -60,7 +59,6 @@
 
                     <div class="etiqueta px-2 mt-3">A CONTINUACIÓN</div>
                     <div id="colaProximasCanciones" class="d-flex flex-column gap-1">
-                       
                     </div>
                 </aside>
 

@@ -1,0 +1,35 @@
+@model List<CancionViewModel>
+@{
+    ViewData["Title"] = "Tus Favoritos";
+}
+
+<section class="d-flex align-items-center gap-3">
+    <div class="cover cover-lg rounded d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #751952, #e91e63); width: 80px; height: 80px;">
+        <span class="text-white" style="font-size: 2rem;">
+            @await Html.PartialAsync("_Icono", "heart")
+        </span>
+    </div>
+    <div>
+        <div class="etiqueta">COLECCIÓN</div>
+        <h1 class="display-5 fw-bold mb-0">Canciones que te gustan</h1>
+        <small class="text-body-secondary">@Model.Count canciones guardadas</small>
+    </div>
+</section>
+
+@if (Model.Any())
+{
+    <section class="d-flex flex-column gap-1">
+        @foreach (var cancion in Model)
+        {
+            <partial name="_CancionFila" model="cancion" />
+        }
+    </section>
+}
+else
+{
+    <div class="panel p-5 text-center my-4">
+        <h3 class="fw-bold mb-2">Aún no agregaste favoritos</h3>
+        <p class="text-body-secondary mb-3">Marcá el corazón en tus temas preferidos para tenerlos siempre a mano.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-accent rounded-pill px-4">Explorar catálogo</a>
+    </div>
+}

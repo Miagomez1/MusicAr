@@ -25,8 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalDurationEl = document.getElementById('total-duration');
     const btnExpPrev = document.getElementById('btnExpPrev');
     const btnExpNext = document.getElementById('btnExpNext');
+    const btnPlayerFavorito = document.getElementById('btnPlayerFavorito');
 
     let currentButton = null;
+    let currentTrackId = null;
+    const favoritosSet = new Set();
 
     function formatTime(seconds) {
         if (isNaN(seconds) || seconds < 0) return "0:00";
@@ -74,6 +77,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function actualizarFavorito(cancionId, esFavorito) {
+        if (esFavorito) {
+            favoritosSet.add(String(cancionId));
+        } else {
+            favoritosSet.delete(String(cancionId));
+        }
+
+        document.querySelectorAll(`.btn-favorito[data-cancion-id="${cancionId}"]`).forEach(btn => {
+            if (esFavorito) {
+                btn.classList.add('activo');
+            } else {
+                btn.classList.remove('activo');
+            }
+        });
+
+        if (btnPlayerFavorito && String(currentTrackId) === String(cancionId)) {
+            if (esFavorito) {
+                btnPlayerFavorito.classList.add('activo');
+            } else {
+                btnPlayerFavorito.classList.remove('activo');
+            }
+        }
+    }
+
+    async function toggleFavorito(cancionId) {
+        if (document.body.dataset.autenticado !== 'true') {
+            window.location.href = '/Cuenta/Login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+            return;
+        }
+
+        if (!cancionId) return;
+
+        try {
+            const res = await fetch('/Favoritos/Toggle/' + cancionId, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                actualizarFavorito(cancionId, data.esFavorito);
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    if (btnPlayerFavorito) {
+        btnPlayerFavorito.addEventListener('click', () => {
+            if (currentTrackId) {
+                toggleFavorito(currentTrackId);
+            }
+        });
+    }
+
+    if (document.body.dataset.autenticado === 'true') {
+        fetch('/Favoritos/Ids')
+            .then(res => res.json())
+            .then(ids => {
+                if (Array.isArray(ids)) {
+                    ids.forEach(id => {
+                        favoritosSet.add(String(id));
+                        document.querySelectorAll(`.btn-favorito[data-cancion-id="${id}"]`).forEach(btn => {
+                            btn.classList.add('activo');
+                        });
+                    });
+                }
+            })
+            .catch(err => console.warn(err));
+    }
+
     function playTrack(btn) {
         if (document.body.dataset.autenticado !== 'true') {
             window.location.href = '/Cuenta/Login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
@@ -85,8 +158,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const titulo = btn.dataset.titulo || fila.dataset.title || btn.dataset.title || 'Canción';
         const artista = btn.dataset.artista || fila.dataset.artist || btn.dataset.artist || 'Artista';
         const cover = btn.dataset.cover || fila.dataset.cover || '';
+        const cancionId = btn.dataset.cancionId || btn.dataset.id || fila.dataset.id;
 
         if (!audioUrl) return;
+
+        if (cancionId) {
+            currentTrackId = cancionId;
+            if (btnPlayerFavorito) {
+                if (favoritosSet.has(String(cancionId))) {
+                    btnPlayerFavorito.classList.add('activo');
+                } else {
+                    btnPlayerFavorito.classList.remove('activo');
+                }
+            }
+        }
 
         const tempAnchor = document.createElement('a');
         tempAnchor.href = audioUrl;
@@ -119,6 +204,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('click', (e) => {
+        const btnFav = e.target.closest('.btn-favorito');
+        if (btnFav) {
+            e.preventDefault();
+            e.stopPropagation();
+            const id = btnFav.dataset.cancionId;
+            toggleFavorito(id);
+            return;
+        }
+
         const btnPlay = e.target.closest('.btn-play');
         if (btnPlay) {
             e.preventDefault();
@@ -196,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const titulo = btn.dataset.titulo || fila.dataset.title || 'Canción';
             const artista = btn.dataset.artista || fila.dataset.artist || 'Artista';
             const cover = btn.dataset.cover || fila.dataset.cover || '';
+            const id = btn.dataset.cancionId || btn.dataset.id || fila.dataset.id;
 
             const item = document.createElement('div');
             item.className = 'cola-item';

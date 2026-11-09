@@ -21,6 +21,19 @@ namespace MusicAr.AuthService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("MusicAr.AuthService.Models.Favorito", b =>
+                {
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CancionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UsuarioId", "CancionId");
+
+                    b.ToTable("Favoritos");
+                });
+
             modelBuilder.Entity("MusicAr.AuthService.Models.Playlist", b =>
                 {
                     b.Property<int>("Id")
@@ -79,6 +92,17 @@ namespace MusicAr.AuthService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("MusicAr.AuthService.Models.Favorito", b =>
+                {
+                    b.HasOne("MusicAr.AuthService.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("MusicAr.AuthService.Models.Playlist", b =>
