@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MusicAr.Web.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body data-autenticado="@(User.Identity?.IsAuthenticated == true ? "true" : "false")">
     <div class="app-shell d-flex flex-column vh-100 p-2 gap-2">
         <div class="d-flex flex-grow-1 gap-2 overflow-hidden">
             <partial name="_Sidebar" />

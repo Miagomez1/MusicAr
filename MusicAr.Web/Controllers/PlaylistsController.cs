@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicAr.DTO;
 using MusicAr.Web.Models;
+using System.Net.Http.Headers;
 
 namespace MusicAr.Web.Controllers
 {
+    [Authorize]
     public class PlaylistsController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -15,7 +17,7 @@ namespace MusicAr.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Nueva()   // <-- ahora async Task
+        public async Task<IActionResult> Nueva()
         {
             return View(new NuevaPlaylistViewModel { Sugeridas = await CargarSugeridasAsync() });
         }
@@ -26,18 +28,26 @@ namespace MusicAr.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.Sugeridas = await CargarSugeridasAsync();   // <-- cambió
+                model.Sugeridas = await CargarSugeridasAsync();
                 return View(model);
             }
 
             var client = _httpClientFactory.CreateClient("ApiGatewayClient");
+            var token = User.FindFirst("TokenJwt")?.Value;
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
             var dto = new CrearPlaylistDto { Nombre = model.Nombre };
 
             try
             {
                 var respuesta = await client.PostAsJsonAsync("api/playlists", dto);
                 if (respuesta.IsSuccessStatusCode)
+                {
                     return RedirectToAction("Index", "Home");
+                }
 
                 ModelState.AddModelError(string.Empty, "No se pudo crear la playlist.");
             }
@@ -46,7 +56,7 @@ namespace MusicAr.Web.Controllers
                 ModelState.AddModelError(string.Empty, "No se pudo conectar con el servidor.");
             }
 
-            model.Sugeridas = await CargarSugeridasAsync();   // <-- cambió
+            model.Sugeridas = await CargarSugeridasAsync();
             return View(model);
         }
 

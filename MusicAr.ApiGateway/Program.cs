@@ -15,7 +15,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = "MusicArAuthService",
             ValidAudience = "MusicArClients",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("claveoculta")) // La misma clave del AuthService
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("uirW30wVdDjrQl2q1jfkMbPdup4q8hmJOmGjJgcGsqVyK5REWTWta7jtX7hQ7unh"))
         };
     });
 
@@ -32,11 +32,3 @@ app.UseAuthorization();
 app.MapReverseProxy();
 app.MapControllers();
 app.Run();
-
-
-
-
-
-
-
-

@@ -75,6 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playTrack(btn) {
+        if (document.body.dataset.autenticado !== 'true') {
+            window.location.href = '/Cuenta/Login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+            return;
+        }
+
         const fila = btn.closest('.fila') || btn;
         const audioUrl = btn.dataset.audio || fila.dataset.audioUrl || btn.dataset.audioUrl;
         const titulo = btn.dataset.titulo || fila.dataset.title || btn.dataset.title || 'Canción';
@@ -107,29 +112,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (filaActual) filaActual.classList.add('sonando');
 
         audio.src = fullAudioUrl;
-        audio.play().catch(e => console.warn("Error al reproducir audio:", e));
+        audio.play().catch(e => console.warn(e));
 
         updateTrackInfo(titulo, artista, cover);
         updateQueue();
     }
 
-document.addEventListener('click', (e) => {
-    const btnPlay = e.target.closest('.btn-play');
-    if (btnPlay) {
-        e.preventDefault();
-        playTrack(btnPlay);
-        return;
-    }
+    document.addEventListener('click', (e) => {
+        const btnPlay = e.target.closest('.btn-play');
+        if (btnPlay) {
+            e.preventDefault();
+            playTrack(btnPlay);
+            return;
+        }
 
-    const songRow = e.target.closest('.song-row, .fila');
-    if (songRow && !e.target.closest('button')) {
-        const playInRow = songRow.querySelector('.btn-play') || songRow;
-        playTrack(playInRow);
-    }
-});
+        const songRow = e.target.closest('.song-row, .fila');
+        if (songRow && !e.target.closest('button')) {
+            const playInRow = songRow.querySelector('.btn-play') || songRow;
+            playTrack(playInRow);
+        }
+    });
 
     if (miniPlayBtn) {
         miniPlayBtn.addEventListener('click', () => {
+            if (document.body.dataset.autenticado !== 'true') {
+                window.location.href = '/Cuenta/Login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+                return;
+            }
             if (!audio.src) return;
             if (audio.paused) audio.play(); else audio.pause();
         });
@@ -137,6 +146,10 @@ document.addEventListener('click', (e) => {
 
     if (expPlayBtn) {
         expPlayBtn.addEventListener('click', () => {
+            if (document.body.dataset.autenticado !== 'true') {
+                window.location.href = '/Cuenta/Login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+                return;
+            }
             if (!audio.src) return;
             if (audio.paused) audio.play(); else audio.pause();
         });
@@ -209,13 +222,13 @@ document.addEventListener('click', (e) => {
         playTrack(buttons[nextIdx]);
     }
 
-  function playPrev() {
-    const buttons = Array.from(document.querySelectorAll('.fila .btn-play, .song-row .btn-play'));
-    if (!buttons.length) return;
-    const idx = buttons.indexOf(currentButton);
-    const prevIdx = (idx - 1 + buttons.length) % buttons.length;
-    playTrack(buttons[prevIdx]);
-}
+    function playPrev() {
+        const buttons = Array.from(document.querySelectorAll('.fila .btn-play, .song-row .btn-play'));
+        if (!buttons.length) return;
+        const idx = buttons.indexOf(currentButton);
+        const prevIdx = (idx - 1 + buttons.length) % buttons.length;
+        playTrack(buttons[prevIdx]);
+    }
 
     audio.addEventListener('ended', playNext);
 
@@ -224,12 +237,12 @@ document.addEventListener('click', (e) => {
     if (btnPlayerPrev) btnPlayerPrev.addEventListener('click', playPrev);
     if (btnExpPrev) btnExpPrev.addEventListener('click', playPrev);
 
-  function seek(e, bar) {
-    if (!audio.duration) return;
-    const rect = bar.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    audio.currentTime = (clickX / rect.width) * audio.duration;
-}
+    function seek(e, bar) {
+        if (!audio.duration) return;
+        const rect = bar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        audio.currentTime = (clickX / rect.width) * audio.duration;
+    }
 
     if (miniProgressContainer) miniProgressContainer.addEventListener('click', (e) => seek(e, miniProgressContainer));
     if (expProgressContainer) expProgressContainer.addEventListener('click', (e) => seek(e, expProgressContainer));
