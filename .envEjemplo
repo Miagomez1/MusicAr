@@ -1,1 +1,2 @@
 CATALOGO_DB_CONNECTION=Server=host.docker.internal,1433;Database=MicroservicioCatalogoDB;User Id=tu_usuario;Password=tu_password;TrustServerCertificate=True;
+AUTH_DB_CONNECTION=Server=host.docker.internal,1433;Database=MicroservicioAuthDB;User Id=tu_usuario;Password=tu_password;TrustServerCertificate=True;

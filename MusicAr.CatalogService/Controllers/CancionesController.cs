@@ -21,7 +21,7 @@ namespace MusicAr.ApiCatalog.Controllers
             _catalogoService = catalogoService;
         }
 
-        [HttpGet("generos")] 
+        [HttpGet("generos")]
         public async Task<IActionResult> Generos()
         {
             var generos = await _catalogoService.ObtenerGenerosAsync();
@@ -50,7 +50,7 @@ namespace MusicAr.ApiCatalog.Controllers
                     c.Id,
                     c.Titulo,
                     c.DurationInSeconds,
-                    c.AudioUrl,
+                    AudioUrl = $"http://localhost:5086/api/canciones/{c.Id}/audio",
                     c.CoverImageUrl,
                     Genero = c.Genero != null
                         ? c.Genero.Nombre
@@ -129,7 +129,6 @@ namespace MusicAr.ApiCatalog.Controllers
             }
             catch
             {
-                // Si Deezer falla, pasamos al fallback
             }
 
             return Redirect("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");

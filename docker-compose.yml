@@ -1,4 +1,3 @@
-
 services:
   catalogo-service:
     build:
@@ -17,31 +16,38 @@ services:
       context: .
       dockerfile: ./MusicAr.ApiGateway/Dockerfile
     ports:
+      - "5086:8080"
       - "5000:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
+      ReverseProxy__Clusters__catalogo__Destinations__catalogo-api__Address: "http://catalogo-service:8080/"
+      ReverseProxy__Clusters__auth__Destinations__auth-api__Address: "http://auth-service:8080/"
     depends_on:
       - catalogo-service
       - auth-service
     networks:
       - musicar-net
+
   auth-service:
     build:
       context: .
       dockerfile: ./MusicAr.AuthService/Dockerfile
     ports:
+      - "5194:8080"
       - "5185:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "${AUTH_DB_CONNECTION}"
     networks:
       - musicar-net
+
   web:
     build:
       context: .
       dockerfile: ./MusicAr.Web/Dockerfile
     ports:
       - "5186:8080"
+      - "5076:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ASPNETCORE_URLS: "http://+:8080"
