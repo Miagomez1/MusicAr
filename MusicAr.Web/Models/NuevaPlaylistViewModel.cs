@@ -4,6 +4,7 @@ namespace MusicAr.Web.Models
 {
     public class NuevaPlaylistViewModel
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Ponele un nombre a tu playlist")]
         [StringLength(100, ErrorMessage = "El nombre no puede superar los 100 caracteres")]
         [Display(Name = "Nombre de la playlist")]

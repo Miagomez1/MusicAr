@@ -4,83 +4,80 @@ using MusicAr.DTO;
 using MusicAr.Web.Models;
 using System.Net.Http.Headers;
 
-namespace MusicAr.Web.Controllers
+[Authorize]
+public class PlaylistsController : Controller
 {
-    [Authorize]
-    public class PlaylistsController : Controller
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public PlaylistsController(IHttpClientFactory httpClientFactory) => _httpClientFactory = httpClientFactory;
+
+    [HttpGet]
+    public async Task<IActionResult> Nueva()
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        // Depuración rápida: Ver todas las claims disponibles
+        var claimsDisponibles = User.Claims.Select(c => $"{c.Type}: {c.Value}").ToList();
 
-        public PlaylistsController(IHttpClientFactory httpClientFactory)
+        var client = _httpClientFactory.CreateClient("ApiGatewayClient");
+
+        // Asegúrate de usar exactamente el mismo nombre de claim con el que guardaste el token al hacer login
+        var token = User.FindFirst("Jwt")?.Value;
+
+        if (string.IsNullOrEmpty(token))
         {
-            _httpClientFactory = httpClientFactory;
+            // Esto te dirá qué claims sí tiene guardadas la cookie actualmente
+            return Content($"Error: No se encontró el token 'TokenJwt'. Claims actuales en la cookie: {string.Join(" | ", claimsDisponibles)}");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Nueva()
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var dto = new CrearPlaylistDto { Nombre = "Mi playlist n.º 1" };
+
+        try
         {
-            return View(new NuevaPlaylistViewModel { Sugeridas = await CargarSugeridasAsync() });
-        }
+            var respuesta = await client.PostAsJsonAsync("api/playlists", dto);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Nueva(NuevaPlaylistViewModel model)
+            // Si la API falla, mostramos el código de error y el texto para saber qué pasó
+            if (!respuesta.IsSuccessStatusCode)
+            {
+                var errorContent = await respuesta.Content.ReadAsStringAsync();
+                return Content($"Error del Backend/Gateway ({respuesta.StatusCode}): {errorContent}");
+            }
+
+            var playlistCreada = await respuesta.Content.ReadFromJsonAsync<PlaylistDto>();
+
+            if (playlistCreada == null || playlistCreada.Id == 0)
+            {
+                return Content("Error: La API respondió OK pero el ID de la playlist llegó vacío o en 0.");
+            }
+
+            return Redirect($"/Playlists/Editar/{playlistCreada.Id}");
+        }
+        catch (Exception ex)
         {
-            if (!ModelState.IsValid)
-            {
-                model.Sugeridas = await CargarSugeridasAsync();
-                return View(model);
-            }
-
-            var client = _httpClientFactory.CreateClient("ApiGatewayClient");
-            var token = User.FindFirst("TokenJwt")?.Value;
-            if (!string.IsNullOrEmpty(token))
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-
-            var dto = new CrearPlaylistDto { Nombre = model.Nombre };
-
-            try
-            {
-                var respuesta = await client.PostAsJsonAsync("api/playlists", dto);
-                if (respuesta.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-
-                ModelState.AddModelError(string.Empty, "No se pudo crear la playlist.");
-            }
-            catch (HttpRequestException)
-            {
-                ModelState.AddModelError(string.Empty, "No se pudo conectar con el servidor.");
-            }
-
-            model.Sugeridas = await CargarSugeridasAsync();
-            return View(model);
+            return Content($"Excepción de red al conectar con el Gateway: {ex.Message}");
         }
+    }
 
-        private async Task<List<CancionViewModel>> CargarSugeridasAsync()
+    [HttpGet("Playlists/Editar/{id}")]
+    public async Task<IActionResult> Editar(int id)
+    {
+        var sugeridas = await CargarSugeridasAsync();
+        var viewModel = new NuevaPlaylistViewModel
         {
-            var client = _httpClientFactory.CreateClient("ApiGatewayClient");
+            Id = id,
+            Sugeridas = sugeridas
+        };
 
-            try
-            {
-                var dtos = await client.GetFromJsonAsync<List<CancionDto>>("api/canciones");
+        return View("Editar", viewModel);
+    }
 
-                return (dtos ?? new List<CancionDto>())
-                    .Take(6)
-                    .Select((c, i) => new CancionViewModel(
-                        Numero: i + 1,
-                        Titulo: c.Titulo,
-                        Artista: c.Artista,
-                        Id: c.Id))
-                    .ToList();
-            }
-            catch (HttpRequestException)
-            {
-                return new List<CancionViewModel>();
-            }
+    private async Task<List<CancionViewModel>> CargarSugeridasAsync()
+    {
+        var client = _httpClientFactory.CreateClient("ApiGatewayClient");
+        try
+        {
+            var dtos = await client.GetFromJsonAsync<List<CancionDto>>("api/canciones");
+            return (dtos ?? new List<CancionDto>()).Take(6).Select((c, i) => new CancionViewModel(i + 1, c.Titulo, c.Artista, c.Id.ToString())).ToList();
         }
+        catch { return new List<CancionViewModel>(); }
     }
 }
