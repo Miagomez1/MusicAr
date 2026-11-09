@@ -51,6 +51,9 @@ namespace MusicAr.AuthService.Migrations
                     b.Property<int>("CancionId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Orden")
+                        .HasColumnType("int");
+
                     b.HasKey("PlaylistId", "CancionId");
 
                     b.ToTable("PlaylistCanciones");

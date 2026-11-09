@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MusicAr.AuthService.Data;
 using MusicAr.AuthService.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +15,33 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
+
+// 1. CONFIGURAR AUTENTICACIÓN JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],       // <-- Cambiado a "Jwt:Issuer"
+        ValidAudience = builder.Configuration["Jwt:Audience"],   // <-- Cambiado a "Jwt:Audience"
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "")) // <-- Cambiado a "Jwt:Key"
+    };
+});
+
 builder.Services.AddScoped<AuthServicio>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();   // <-- si ya existe el servicio
 var app = builder.Build();
@@ -40,6 +65,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+<<<<<<< Updated upstream
+=======
+app.UseAuthentication();
+>>>>>>> Stashed changes
 app.UseAuthorization();
 
 app.MapControllers();

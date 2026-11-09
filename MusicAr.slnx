@@ -1,5 +1,17 @@
 <Solution>
+<<<<<<< Updated upstream
   <Folder Name="/Services/" />
+=======
+  <Folder Name="/Docker/">
+    <File Path=".dockerignore" />
+    <File Path=".env" />
+    <File Path=".envEjemplo" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="MusicAr.AuthService/MusicAr.AuthService.csproj" />
+  </Folder>
+>>>>>>> Stashed changes
   <Folder Name="/Services/Catalog/">
     <Project Path="MusicAr.CatalogService/MusicAr.ApiCatalog.csproj" />
     <Project Path="MusicAr.Entidades/MusicAr.Entidades.csproj" Id="163df3ee-16a6-45d2-b4ab-c53fc7e1a30e" />
@@ -7,7 +19,6 @@
     <Project Path="MusicAr.Logica/MusicAr.Logica.csproj" Id="249a60c0-e52c-46ef-91f4-0c3d99ddd249" />
   </Folder>
   <Project Path="MusicAr.ApiGateway/MusicAr.ApiGateway.csproj" />
-  <Project Path="MusicAr.AuthService/MusicAr.AuthService.csproj" />
   <Project Path="MusicAr.DTO/MusicAr.DTO.csproj" Id="eac6d20c-dff4-43f6-bb72-3d7191bfe4b8" />
   <Project Path="MusicAr.Web/MusicAr.Web.csproj" />
 </Solution>

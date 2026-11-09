@@ -3,27 +3,27 @@
     ViewData["Title"] = "Nueva playlist";
 }
 
-<form asp-action="Nueva" method="post" class="d-flex flex-column gap-4">
+<form id="formCrearPlaylist" class="d-flex flex-column gap-4">
     <div asp-validation-summary="ModelOnly" class="text-danger-emphasis"></div>
     <section class="playlist-header d-flex align-items-end gap-4 p-4">
         <div class="cover cover-xl cover-oscuro centrado">@await Html.PartialAsync("_Icono", "nota")</div>
         <div class="flex-grow-1">
             <div class="etiqueta text-white mb-2">PLAYLIST</div>
             <label asp-for="Nombre" class="visually-hidden"></label>
-            <input asp-for="Nombre" class="playlist-nombre" />
+            <input asp-for="Nombre" class="playlist-nombre" placeholder="Mis favoritos..." />
             <span asp-validation-for="Nombre" class="text-white small d-block"></span>
-            @* TODO: mostrar el nombre del usuario logueado y la cantidad real de canciones *@
-            <div class="small mt-2">Tu usuario · 0 canciones</div>
+
+            <div class="small mt-2">Tu usuario · <span id="contadorCanciones">0</span> canciones</div>
         </div>
     </section>
 
     <div class="d-flex align-items-center gap-3">
         <button type="button" class="btn btn-neutral btn-play btn-play-lg" disabled aria-label="Reproducir">@await Html.PartialAsync("_Icono", "play")</button>
-        <button type="submit" class="btn btn-accent rounded-pill px-4">Guardar playlist</button>
+        <button type="submit" id="btnGuardar" class="btn btn-accent rounded-pill px-4">Guardar playlist</button>
     </div>
 </form>
 
-<section class="d-flex flex-column gap-3">
+<section class="d-flex flex-column gap-3 mt-4">
     <h2 class="h4 fw-bold mb-0">Busquemos algo para tu playlist</h2>
     <div class="buscador d-flex align-items-center gap-2 px-3" style="max-width: 420px;">
         @await Html.PartialAsync("_Icono", "search")
@@ -34,14 +34,16 @@
     <div class="d-flex flex-column gap-1">
         @foreach (var cancion in Model.Sugeridas)
         {
-            <div class="fila-simple">
-                <span class="cover cover-md"></span>
-                <div>
-                    <div>@cancion.Titulo</div>
-                    <small class="text-body-secondary">@cancion.Artista</small>
+            <div class="fila-simple d-flex align-items-center justify-content-between py-2">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="cover cover-md"></span>
+                    <div>
+                        <div class="fw-bold">@cancion.Titulo</div>
+                        <small class="text-body-secondary">@cancion.Artista</small>
+                    </div>
                 </div>
-                @* TODO: agregar la canción a la playlist (guarda solo el SongId) *@
-                <button type="button" class="btn btn-outline-light rounded-pill btn-sm px-3">Agregar</button>
+                <!-- Añadido data-cancion-id y una clase específica para el selector -->
+                <button type="button" data-cancion-id="@cancion.Id" class="btn btn-outline-light rounded-pill btn-sm px-3 btn-agregar">Agregar</button>
             </div>
         }
     </div>
@@ -49,4 +51,69 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        let playlistIdActual = null;
+        let cantidadCanciones = 0;
+
+        // 1. Interceptar la creación de la playlist por AJAX
+        $('#formCrearPlaylist').on('submit', function (e) {
+            e.preventDefault();
+
+            const nombrePlaylist = $('#Nombre').val();
+            if (!nombrePlaylist) {
+                alert("Por favor, ingresa un nombre para la playlist.");
+                return;
+            }
+
+            $.ajax({
+                url: '/playlists/crear-ajax',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ nombre: nombrePlaylist }),
+                success: function (response) {
+                    playlistIdActual = response.id;
+
+                    // Feedback visual de éxito
+                    alert(`¡Playlist "${response.nombre}" creada con éxito! Ya puedes agregar canciones.`);
+                    $('#Nombre').prop('readonly', true);
+                    $('#btnGuardar').text('Playlist guardada').prop('disabled', true).removeClass('btn-accent').addClass('btn-success');
+                },
+                error: function (xhr) {
+                    console.error("Error al crear la playlist:", xhr.responseText);
+                    alert("Ocurrió un error al crear la playlist.");
+                }
+            });
+        });
+
+        // 2. Manejar el clic en "Agregar" para cada canción de forma dinámica
+        $(document).on('click', '.btn-agregar', function () {
+            if (!playlistIdActual) {
+                alert("Primero debes hacer clic en 'Guardar playlist' arriba para iniciarla.");
+                return;
+            }
+
+            const boton = $(this);
+            const cancionId = boton.data('cancion-id');
+
+            $.ajax({
+                url: `/playlists/${playlistIdActual}/canciones`,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ cancionId: cancionId }),
+                success: function (response) {
+                    // Actualizar estado del botón
+                    boton.text('Agregada').prop('disabled', true).removeClass('btn-outline-light').addClass('btn-success');
+
+                    // Incrementar contador visual de canciones
+                    cantidadCanciones++;
+                    $('#contadorCanciones').text(cantidadCanciones);
+                },
+                error: function (xhr) {
+                    console.error("Error al agregar la canción:", xhr.responseText);
+                    alert("No se pudo agregar la canción a la playlist.");
+                }
+            });
+        });
+    </script>
 }

@@ -15,6 +15,8 @@ namespace MusicAr.AuthService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<PlaylistCancion>()
                 .HasKey(pc => new { pc.PlaylistId, pc.CancionId });
         }
