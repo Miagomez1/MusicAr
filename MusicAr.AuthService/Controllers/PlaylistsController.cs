@@ -1,10 +1,8 @@
-<<<<<<< Updated upstream
-﻿using Microsoft.AspNetCore.Mvc;
-=======
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
->>>>>>> Stashed changes
 using MusicAr.DTO;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 [Authorize]
 [ApiController]
@@ -26,10 +24,7 @@ public class PlaylistsController : ControllerBase
         return Ok(playlist);
     }
 
-<<<<<<< Updated upstream
-    // TEMPORAL: cuando exista el login con JWT, este valor sale del token
-    private int ObtenerUsuarioId() => 1;
-=======
+
     [HttpPost("{id}/canciones")]
     public async Task<IActionResult> AgregarCancion(int id, [FromBody] AgregarCancionDto dto)
     {
@@ -74,5 +69,4 @@ public class PlaylistsController : ControllerBase
 
         return 0;
     }
->>>>>>> Stashed changes
 }

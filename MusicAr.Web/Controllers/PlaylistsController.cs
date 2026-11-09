@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicAr.DTO;
 using MusicAr.Web.Models;
+using System.Net.Http.Headers;
 
 namespace MusicAr.Web.Controllers
 {
@@ -26,14 +27,7 @@ namespace MusicAr.Web.Controllers
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.Nombre))
             {
-<<<<<<< Updated upstream
-                model.Sugeridas = await CargarSugeridasAsync();   // <-- cambió
-                return View(model);
-            }
 
-            var client = _httpClientFactory.CreateClient("ApiGatewayClient");
-            var dto = new CrearPlaylistDto { Nombre = model.Nombre };
-=======
                 return BadRequest(new { mensaje = "El nombre de la playlist es requerido." });
             }
 
@@ -43,21 +37,17 @@ namespace MusicAr.Web.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
->>>>>>> Stashed changes
 
             try
             {
                 var respuesta = await client.PostAsJsonAsync("api/playlists", dto);
                 if (respuesta.IsSuccessStatusCode)
-<<<<<<< Updated upstream
-                    return RedirectToAction("Index", "Home");
-=======
+
                 {
                     // Lee el resultado (que contiene el ID generado) y lo devuelve como JSON al frontend
                     var resultado = await respuesta.Content.ReadFromJsonAsync<object>();
                     return Ok(resultado);
                 }
->>>>>>> Stashed changes
 
                 return BadRequest(new { mensaje = "No se pudo crear la playlist en el servidor." });
             }
@@ -76,10 +66,6 @@ namespace MusicAr.Web.Controllers
                 return BadRequest(new { mensaje = "Los datos de la canción son inválidos." });
             }
 
-<<<<<<< Updated upstream
-            model.Sugeridas = await CargarSugeridasAsync();   // <-- cambió
-            return View(model);
-=======
             var client = _httpClientFactory.CreateClient("ApiGatewayClient");
             var token = User.FindFirst("TokenJwt")?.Value;
             if (!string.IsNullOrEmpty(token))
@@ -105,7 +91,6 @@ namespace MusicAr.Web.Controllers
             {
                 return StatusCode(500, new { mensaje = "Error de conexión con el servidor." });
             }
->>>>>>> Stashed changes
         }
 
         private async Task<List<CancionViewModel>> CargarSugeridasAsync()

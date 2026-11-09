@@ -65,10 +65,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-<<<<<<< Updated upstream
-=======
+
 app.UseAuthentication();
->>>>>>> Stashed changes
 app.UseAuthorization();
 
 app.MapControllers();
