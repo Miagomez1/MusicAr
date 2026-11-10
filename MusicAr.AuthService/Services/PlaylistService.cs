@@ -6,9 +6,7 @@ using MusicAr.DTO;
 public interface IPlaylistService
 {
     Task<PlaylistDto> CrearAsync(int usuarioId, CrearPlaylistDto dto);
-    Task<bool> ActualizarNombreAsync(int id, int usuarioId, string nombre);
-    Task<bool> AgregarCancionAsync(int playlistId, int cancionId);
-    Task<List<PlaylistDto>> ObtenerPorUsuarioAsync(int usuarioId);
+    Task<PlaylistCancionDto> AgregarCancionAsync(int playlistId, int usuarioId, AgregarCancionDto dto);
 }
 
 public class PlaylistService : IPlaylistService
@@ -22,53 +20,39 @@ public class PlaylistService : IPlaylistService
 
     public async Task<PlaylistDto> CrearAsync(int usuarioId, CrearPlaylistDto dto)
     {
-        var playlist = new Playlist
-        {
-            Nombre = string.IsNullOrWhiteSpace(dto.Nombre) ? "Mi playlist n.º 1" : dto.Nombre,
-            UsuarioId = usuarioId
-        };
-
+        var playlist = new Playlist { Nombre = dto.Nombre, UsuarioId = usuarioId };
         _context.Playlists.Add(playlist);
         await _context.SaveChangesAsync();
 
         return new PlaylistDto { Id = playlist.Id, Nombre = playlist.Nombre };
     }
 
-    public async Task<bool> ActualizarNombreAsync(int id, int usuarioId, string nombre)
+    public async Task<PlaylistCancionDto> AgregarCancionAsync(int playlistId, int usuarioId, AgregarCancionDto dto)
     {
         var playlist = await _context.Playlists
-            .FirstOrDefaultAsync(p => p.Id == id && p.UsuarioId == usuarioId);
+            .Include(p => p.Canciones)
+            .FirstOrDefaultAsync(p => p.Id == playlistId && p.UsuarioId == usuarioId);
 
-        if (playlist == null) return false;
+        if (playlist == null) return null;
 
-        playlist.Nombre = string.IsNullOrWhiteSpace(nombre) ? "Mi playlist n.º 1" : nombre.Trim();
-        _context.Playlists.Update(playlist);
+        int siguienteOrden = playlist.Canciones.Any()
+            ? playlist.Canciones.Max(c => c.Orden) + 1
+            : 1;
+
+        var playlistCancion = new PlaylistCancion
+        {
+            PlaylistId = playlistId,
+            CancionId = dto.CancionId,
+            Orden = siguienteOrden
+        };
+
+        _context.PlaylistCanciones.Add(playlistCancion);
         await _context.SaveChangesAsync();
 
-        return true;
-    }
-
-    public async Task<bool> AgregarCancionAsync(int playlistId, int cancionId)
-    {
-        var playlistExiste = await _context.Playlists.AnyAsync(p => p.Id == playlistId);
-        if (!playlistExiste) return false;
-
-        var yaExiste = await _context.PlaylistCanciones
-            .AnyAsync(pc => pc.PlaylistId == playlistId && pc.CancionId == cancionId);
-
-        if (yaExiste) return true;
-
-        _context.PlaylistCanciones.Add(new PlaylistCancion { PlaylistId = playlistId, CancionId = cancionId });
-        await _context.SaveChangesAsync();
-
-        return true;
-    }
-
-    public async Task<List<PlaylistDto>> ObtenerPorUsuarioAsync(int usuarioId)
-    {
-        return await _context.Playlists
-            .Where(p => p.UsuarioId == usuarioId)
-            .Select(p => new PlaylistDto { Id = p.Id, Nombre = p.Nombre })
-            .ToListAsync();
+        return new PlaylistCancionDto
+        {
+            CancionId = dto.CancionId,
+            Orden = siguienteOrden
+        };
     }
 }
