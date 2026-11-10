@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MusicAr.DTO;
 using MusicAr.Entidades;
 
@@ -29,7 +29,7 @@ namespace MusicAr.Infraestructura
                     DurationInSeconds = c.DurationInSeconds,
                     Artista = c.Artista != null ? c.Artista.Name : string.Empty,
                     CoverImageUrl = c.CoverImageUrl,
-                    AudioUrl = $"http://localhost:5086/api/canciones/{c.Id}/audio"
+                    AudioUrl = $"/api/canciones/{c.Id}/audio"
                 })
                 .ToListAsync();
         }

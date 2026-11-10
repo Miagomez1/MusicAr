@@ -50,7 +50,7 @@ namespace MusicAr.ApiCatalog.Controllers
                     c.Id,
                     c.Titulo,
                     c.DurationInSeconds,
-                    AudioUrl = $"http://localhost:5086/api/canciones/{c.Id}/audio",
+                    AudioUrl = $"/api/canciones/{c.Id}/audio",
                     c.CoverImageUrl,
                     Genero = c.Genero != null
                         ? c.Genero.Nombre
@@ -81,7 +81,7 @@ namespace MusicAr.ApiCatalog.Controllers
                     c.Id,
                     c.Titulo,
                     c.DurationInSeconds,
-                    AudioUrl = $"http://localhost:5086/api/canciones/{c.Id}/audio",
+                    AudioUrl = $"/api/canciones/{c.Id}/audio",
                     c.CoverImageUrl,
                     Genero = genero.Nombre,
                     Artista = c.Artista != null ? c.Artista.Name : "Desconocido"
@@ -105,33 +105,21 @@ namespace MusicAr.ApiCatalog.Controllers
         }
 
         [HttpGet("{id:int}/audio")]
-        public async Task<IActionResult> ObtenerAudioCancion(int id, [FromServices] IHttpClientFactory httpClientFactory)
+        public async Task<IActionResult> ObtenerAudioCancion(int id, [FromServices] IWebHostEnvironment env)
         {
             var cancion = await _context.Canciones
                 .AsNoTracking()
-                .Include(c => c.Artista)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (cancion == null) return NotFound();
 
-            try
+            var ruta = Path.Combine(env.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot"), "audios", "demo.mp3");
+            if (!System.IO.File.Exists(ruta))
             {
-                var client = httpClientFactory.CreateClient();
-                var query = Uri.EscapeDataString($"{cancion.Artista?.Name} {cancion.Titulo}");
-                var url = $"https://api.deezer.com/search?q={query}";
-                var resp = await client.GetFromJsonAsync<DeezerTrackResponse>(url);
-                var preview = resp?.Data?.FirstOrDefault(d => !string.IsNullOrEmpty(d.Preview))?.Preview;
-
-                if (!string.IsNullOrEmpty(preview))
-                {
-                    return Redirect(preview);
-                }
-            }
-            catch
-            {
+                return NotFound();
             }
 
-            return Redirect("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
+            return PhysicalFile(ruta, "audio/mpeg", enableRangeProcessing: true);
         }
     }
 }

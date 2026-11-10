@@ -1,4 +1,4 @@
-﻿using MusicAr.DTO;
+using MusicAr.DTO;
 using MusicAr.Infraestructura;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +35,7 @@ namespace MusicAr.Logica
                     Id = c.Id,
                     Titulo = c.Titulo,
                     DurationInSeconds = c.DurationInSeconds,
-                    AudioUrl = $"http://localhost:5086/api/canciones/{c.Id}/audio",
+                    AudioUrl = $"/api/canciones/{c.Id}/audio",
                     CoverImageUrl = c.CoverImageUrl,
                     Genero = c.Genero != null ? c.Genero.Nombre : string.Empty,
                     Artista = c.Artista != null ? c.Artista.Name : string.Empty
