@@ -105,13 +105,32 @@ namespace MusicAr.ApiCatalog.Controllers
         }
 
         [HttpGet("{id:int}/audio")]
-        public async Task<IActionResult> ObtenerAudioCancion(int id, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> ObtenerAudioCancion(int id, [FromServices] IHttpClientFactory httpClientFactory, [FromServices] IWebHostEnvironment env)
         {
             var cancion = await _context.Canciones
                 .AsNoTracking()
+                .Include(c => c.Artista)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (cancion == null) return NotFound();
+
+            try
+            {
+                var client = httpClientFactory.CreateClient();
+                client.Timeout = TimeSpan.FromSeconds(3);
+                var query = Uri.EscapeDataString($"{cancion.Artista?.Name} {cancion.Titulo}");
+                var url = $"https://api.deezer.com/search?q={query}";
+                var resp = await client.GetFromJsonAsync<DeezerTrackResponse>(url);
+                var preview = resp?.Data?.FirstOrDefault(d => !string.IsNullOrEmpty(d.Preview))?.Preview;
+
+                if (!string.IsNullOrEmpty(preview))
+                {
+                    return Redirect(preview);
+                }
+            }
+            catch
+            {
+            }
 
             var ruta = Path.Combine(env.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot"), "audios", "demo.mp3");
             if (!System.IO.File.Exists(ruta))

@@ -18,16 +18,17 @@ namespace MusicAr.Web.Controllers
         [HttpGet("{id:int}/audio")]
         public async Task<IActionResult> ObtenerAudio(int id)
         {
-            var rutaLocal = Path.Combine(_env.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot"), "audios", "demo.mp3");
-            if (System.IO.File.Exists(rutaLocal))
-            {
-                return PhysicalFile(rutaLocal, "audio/mpeg", enableRangeProcessing: true);
-            }
-
             try
             {
                 var client = _httpClientFactory.CreateClient("ApiGatewayClient");
                 var response = await client.GetAsync($"api/canciones/{id}/audio", HttpCompletionOption.ResponseHeadersRead);
+
+                if (response.RequestMessage?.RequestUri != null && 
+                    !response.RequestMessage.RequestUri.ToString().Contains("/api/canciones/"))
+                {
+                    return Redirect(response.RequestMessage.RequestUri.ToString());
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     var stream = await response.Content.ReadAsStreamAsync();
@@ -36,6 +37,12 @@ namespace MusicAr.Web.Controllers
             }
             catch
             {
+            }
+
+            var rutaLocal = Path.Combine(_env.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot"), "audios", "demo.mp3");
+            if (System.IO.File.Exists(rutaLocal))
+            {
+                return PhysicalFile(rutaLocal, "audio/mpeg", enableRangeProcessing: true);
             }
 
             return NotFound();
