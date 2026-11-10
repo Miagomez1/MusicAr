@@ -117,7 +117,7 @@ namespace MusicAr.ApiCatalog.Controllers
             try
             {
                 var client = httpClientFactory.CreateClient();
-                client.Timeout = TimeSpan.FromSeconds(3);
+                client.Timeout = TimeSpan.FromSeconds(5);
                 var query = Uri.EscapeDataString($"{cancion.Artista?.Name} {cancion.Titulo}");
                 var url = $"https://api.deezer.com/search?q={query}";
                 var resp = await client.GetFromJsonAsync<DeezerTrackResponse>(url);
@@ -128,8 +128,9 @@ namespace MusicAr.ApiCatalog.Controllers
                     return Redirect(preview);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"[Deezer] Fallback a demo para cancion {id}: {ex.Message}");
             }
 
             var ruta = Path.Combine(env.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot"), "audios", "demo.mp3");

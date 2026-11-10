@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MusicAr.Web.Controllers
@@ -6,12 +7,12 @@ namespace MusicAr.Web.Controllers
     [Route("api/[controller]")]
     public class CancionesController : ControllerBase
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
 
-        public CancionesController(IHttpClientFactory httpClientFactory, IWebHostEnvironment env)
+        public CancionesController(IConfiguration configuration, IWebHostEnvironment env)
         {
-            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
             _env = env;
         }
 
@@ -20,13 +21,23 @@ namespace MusicAr.Web.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("ApiGatewayClient");
-                var response = await client.GetAsync($"api/canciones/{id}/audio", HttpCompletionOption.ResponseHeadersRead);
+                var handler = new HttpClientHandler { AllowAutoRedirect = false };
+                using var client = new HttpClient(handler);
+                client.Timeout = TimeSpan.FromSeconds(5);
+                var gatewayUrl = _configuration["ApiSettings:BaseUrl"] ?? "http://localhost:5086/";
+                var requestUrl = new Uri(new Uri(gatewayUrl), $"api/canciones/{id}/audio");
 
-                if (response.RequestMessage?.RequestUri != null && 
-                    !response.RequestMessage.RequestUri.ToString().Contains("/api/canciones/"))
+                var response = await client.GetAsync(requestUrl);
+
+                if (response.StatusCode == HttpStatusCode.Redirect || 
+                    response.StatusCode == HttpStatusCode.MovedPermanently || 
+                    response.StatusCode == HttpStatusCode.Found)
                 {
-                    return Redirect(response.RequestMessage.RequestUri.ToString());
+                    var redirectUrl = response.Headers.Location;
+                    if (redirectUrl != null)
+                    {
+                        return Redirect(redirectUrl.ToString());
+                    }
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -35,8 +46,9 @@ namespace MusicAr.Web.Controllers
                     return File(stream, "audio/mpeg", enableRangeProcessing: true);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"[Web Audio] Error obteniendo audio de api-gateway: {ex.Message}");
             }
 
             var rutaLocal = Path.Combine(_env.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot"), "audios", "demo.mp3");
